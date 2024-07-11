@@ -7,40 +7,48 @@ import { MdOutlineLocationCity } from "react-icons/md";
 import { TbMapPinCode } from "react-icons/tb";
 import { FaMapLocationDot } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
-import { useState, FormEvent, useRef } from "react"
+import { useState, FormEvent, useRef, ChangeEvent } from "react"
+import { MdHomeRepairService } from "react-icons/md";
+
 import { notify } from "../utils/Toast";
+export interface UserData {
+    name: string,
+    profession:string,
+    building: string,
+    city: string,
+    state: string,
+    pincode: string
+    phone: string,
+    email: string
+}
 
 function Form() {
-    const [name, setName] = useState<string>('')
-    const [phone, setPhone] = useState<string>('')
-    const [email, setEmail] = useState<string>('')
-    const [building, setBuilding] = useState<string>('')
-    const [city, setCity] = useState<string>('')
-    const [state, setState] = useState<string>('')
-    const [pincode, setPincode] = useState<string>('')
+
+    const [formData, setFormData] = useState<UserData>({
+        name: '',
+        profession: '',
+        building: '',
+        city: '',
+        state: '',
+        pincode: '',
+        phone: '',
+        email: ''
+    })
     const [showOtherSection, setShowOtherSection] = useState<boolean>(false);
     const formRef = useRef<HTMLFormElement>(null)
-    const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+    const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/
     const navigate = useNavigate();
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         try {
-            if (!building || !state || !city || !pincode) {
+            if (!formData.building || !formData.state || !formData.city || !formData.pincode) {
                 notify('Fill all the fields')
                 return;
             }
 
             await axios.post('http://localhost:4000/saveData', {
-                name,
-                address: {
-                    building,
-                    city,
-                    state,
-                    pincode
-                },
-                phone,
-                email
+                formData
             })
             formRef.current && formRef.current.reset();
             setShowOtherSection(false);
@@ -53,18 +61,21 @@ function Form() {
 
     const handleNext = (e: FormEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        if (!name || !email) {
+        if (!formData.name || !formData.email) {
             notify('Fill all the fields');
             return;
         }
-        if (!email.match(emailRegex)) {
+        if (!formData.email.match(emailRegex)) {
             alert('Invalid email')
             return;
         }
+        console.log(formData.profession)
         formRef.current && formRef.current.reset();
         setShowOtherSection(true);
     }
-
+    const addFormData = (event: ChangeEvent<HTMLInputElement>) => {
+        setFormData({ ...formData, [event.target.name]: event.target.value })
+    }
     return (
         <div className='min-h-[100vh] flex items-center  bg-cover bg-no-repeat' id="form" >
             <div className='w-[100%]'>
@@ -79,15 +90,26 @@ function Form() {
                             <div className='flex flex-col gap-5'>
                                 <div className='relative'>
                                     <FaUser className='text-white absolute start-3 top-[9px] text-[1.5rem]' />
-                                    <input type="text" placeholder='Name*' id="name" onChange={(e) => setName(e.target.value)} className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
+                                    <input type="text" placeholder='Name*' name='name' id="name" onChange={(e) => addFormData(e)} className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
                                 </div>
                                 <div className='relative'>
                                     <IoIosMail className='text-white absolute start-3 top-[9px] text-[1.5rem]' />
-                                    <input type="email" placeholder='Email*' onChange={(e) => setEmail(e.target.value)} className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
+                                    <input type="email" placeholder='Email*' name="email" onChange={(e) => addFormData(e)} className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
                                 </div>
                                 <div className='relative'>
                                     <FaPhone className='text-white absolute start-3 top-[12px] text-[1.3rem]' />
-                                    <input type="number" onChange={(e) => setPhone(e.target.value)} placeholder='Phone No' className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
+                                    <input type="number" name="phone" onChange={(e) => addFormData(e)} placeholder='Phone No' className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
+                                </div>
+                                <div className='relative'>
+                                <MdHomeRepairService className='text-white absolute start-3 top-[10px] text-[1.5rem]'  />
+                                    <select className="border w-[100%]  outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b] cursor-pointer ms-auto" name="profession" onChange={(e) => addFormData(e)} >
+                                    <option value="manager" selected disabled>Profession</option>
+                                        <option value="manager">Manager</option>
+                                        <option value="developer">Developer</option>
+                                        <option value="designer">Designer</option>
+                                        <option value="marketing">Marketing</option>
+                                        <option value="hr">HR</option>
+                                    </select>
                                 </div>
                             </div>
                             <div className="flex justify-center my-5">
@@ -99,19 +121,19 @@ function Form() {
                             <div className='flex flex-col gap-5'>
                                 <div className='relative'>
                                     <MdOutlineLocationCity className='text-white absolute start-3 top-[9px] text-[1.5rem] ' />
-                                    <input type="text" placeholder='Building , Street*' onChange={(e) => setBuilding(e.target.value)} className=' pe-3 border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
+                                    <input type="text" placeholder='Building , Street*' name="building" onChange={(e) => addFormData(e)} className=' pe-3 border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
                                 </div>
                                 <div className='relative'>
                                     <FaAddressCard className='text-white absolute start-3 top-[9px] text-[1.5rem]' />
-                                    <input type="text" placeholder='City*' onChange={(e) => setCity(e.target.value)} className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
+                                    <input type="text" placeholder='City*' name="city" onChange={(e) => addFormData(e)} className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
                                 </div>
                                 <div className='relative'>
                                     <FaMapLocationDot className='text-white absolute start-3 top-[12px] text-[1.3rem]' />
-                                    <input type="text" placeholder='State*' onChange={(e) => setState(e.target.value)} className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
+                                    <input type="text" placeholder='State*' name="state" onChange={(e) => addFormData(e)} className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
                                 </div>
                                 <div className='relative'>
                                     <TbMapPinCode className='text-white absolute start-3 top-[12px] text-[1.3rem]' />
-                                    <input type="number" placeholder='Pincode*' onChange={(e) => setPincode(e.target.value)} className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
+                                    <input type="number" placeholder='Pincode*' name="pincode" onChange={(e) => addFormData(e)} className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
                                 </div>
 
                             </div>

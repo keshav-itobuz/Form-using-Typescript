@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useRef, useState} from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaTrashAlt } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
@@ -9,48 +9,41 @@ import { RxCross2 } from 'react-icons/rx';
 export interface UserData {
     _id: string
     name: string,
-    address: {
-        building: string,
-        city: string,
-        state: string,
-        pincode: string
-    },
+    building: string,
+    city: string,
+    state: string,
+    pincode: string,
     phone: string,
     email: string
 }
 
 const UserData = () => {
+    const [formData, setFormData] = useState<UserData>({
+        _id: '',
+        name: '',
+        building: '',
+        city: '',
+        state: '',
+        pincode: '',
+        phone: '',
+        email: ''
+    })
     const [userInfo, setUserInfo] = useState<Array<UserData>>([]);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
-    const [name, setName] = useState<string>('')
-    const [phone, setPhone] = useState<string>('')
-    const [email, setEmail] = useState<string>('')
-    const [building, setBuilding] = useState<string>('')
-    const [city, setCity] = useState<string>('')
-    const [state, setState] = useState<string>('')
-    const [pincode, setPincode] = useState<string>('')
-    const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+    const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/
 
     const handleSubmit = async () => {
         try {
-            if (!building || !state || !city || !pincode || !name || !email) {
+            if (!formData.building || !formData.state || !formData.city || !formData.pincode) {
                 notify('Fill all the fields')
                 return;
             }
-            if (!email.match(emailRegex)) {
+            if (!formData.email.match(emailRegex)) {
                 alert('Invalid email')
                 return;
             }
             await axios.put('http://localhost:4000/updateData', {
-                name,
-                address: {
-                    building,
-                    city,
-                    state,
-                    pincode
-                },
-                phone,
-                email
+                formData
             })
             notify('sucessfully updated');
             getData();
@@ -64,7 +57,6 @@ const UserData = () => {
         try {
             const userData = await axios.get('http://localhost:4000/getData')
             setUserInfo(userData.data.data);
-            console.log(userData.data.data)
         }
         catch (error) {
             console.log(error);
@@ -90,14 +82,22 @@ const UserData = () => {
         const filteredData = userInfo.filter((item) => {
             return item._id === id
         })
-        setBuilding(filteredData[0].address.building);
-        setCity(filteredData[0].address.city);
-        setState(filteredData[0].address.state);
-        setPincode(filteredData[0].address.pincode);
-        setName(filteredData[0].name);
-        setPhone(filteredData[0].phone);
-        setEmail(filteredData[0].email);
+        const updatingData = {
+            _id: filteredData[0]._id,
+            name: filteredData[0].name,
+            building: filteredData[0].building,
+            city: filteredData[0].city,
+            state: filteredData[0].state,
+            pincode: filteredData[0].pincode,
+            phone: filteredData[0].phone,
+            email: filteredData[0].email,
+        }
+        setFormData(updatingData);
 
+    }
+
+    const addFormData = (event: ChangeEvent<HTMLInputElement>) => {
+        setFormData({ ...formData, [event.target.name]: event.target.value })
     }
 
     useEffect(() => {
@@ -106,7 +106,17 @@ const UserData = () => {
 
     return (
         <div className="bg-[#0597ff22] min-h-[100vh] pb-10 px-2">
-            <p className="py-6 text-end max-w-[1200px] mx-auto text-violet-900 cursor-pointer"><Link to={'/addData'} >Add Employee data</Link></p>
+            <div className="flex max-w-[1200px] justify-between">
+                <select className="border  outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b] cursor-pointer ms-auto" name="profession" onChange={(e) => addFormData(e)} >
+                    <option value="manager" selected disabled>Profession</option>
+                    <option value="manager">Manager</option>
+                    <option value="developer">Developer</option>
+                    <option value="designer">Designer</option>
+                    <option value="marketing">Marketing</option>
+                    <option value="hr">HR</option>
+                </select>
+                <p className="py-6  mx-auto text-violet-900 cursor-pointer"><Link to={'/addData'} >Add Employee data</Link></p>
+            </div>
             <div className="max-w-[1200px] mx-auto">
                 <div className=' grid grid-cols-12 bg-white py-2 border rounded-t-2xl'>
                     <span className='col-span-2 ms-3 '>Name</span>
@@ -118,7 +128,7 @@ const UserData = () => {
                     {userInfo.map((data, index) => (
                         <div className=' grid grid-cols-12 bg-white border py-4' key={index}>
                             <span className='col-span-2 ms-3 truncate'>{data?.name[0].toLocaleUpperCase() + data?.name.slice(1)} </span>
-                            <span className='col-span-5 pe-3'>{`${data?.address?.building} ${data?.address?.city} ${data?.address?.state} - ${data?.address?.pincode}`}</span>
+                            <span className='col-span-5 pe-3'>{`${data?.building} ${data?.city} ${data?.state} - ${data?.pincode}`}</span>
                             <span className='col-span-2 truncate pe-2'>{data?.email}</span>
                             <span className='col-span-2 truncate'>{data?.phone === "" ? "---" : data?.phone}</span>
                             <span className="col-span-1 flex gap-8">
@@ -150,8 +160,9 @@ const UserData = () => {
                                     <span className="ms-1 text-red-700">*</span>
                                 </p>
                                 <input
-                                    value={name}
-                                    onChange={(e)=>setName(e.target.value)}
+                                    value={formData.name}
+                                    name="name"
+                                    onChange={(e) => addFormData(e)}
                                     className=" outline-none font-default-font-family placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
                                 />
                             </div>
@@ -161,8 +172,8 @@ const UserData = () => {
                                     <span className="ms-1 text-red-700">*</span>
                                 </p>
                                 <input
-                                    value={email}
-                                    onChange={(e)=>setEmail(e.target.value)}
+                                    value={formData.email}
+                                    name="email" onChange={(e) => addFormData(e)}
                                     className=" outline-none font-default-font-family placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
                                 />
                             </div>
@@ -171,8 +182,8 @@ const UserData = () => {
                                     Phone No
                                 </p>
                                 <input
-                                    value={phone}
-                                    onChange={(e)=>setPhone(e.target.value)}
+                                    value={formData.phone}
+                                    name="phone" onChange={(e) => addFormData(e)}
                                     className=" outline-none font-default-font-family placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
                                 />
                             </div>
@@ -182,8 +193,8 @@ const UserData = () => {
                                     <span className="ms-1">*</span>
                                 </p>
                                 <input
-                                    value={building}
-                                    onChange={(e)=>setBuilding(e.target.value)}
+                                    value={formData.building}
+                                    name="building" onChange={(e) => addFormData(e)}
                                     className=" outline-none font-default-font-family placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
                                 />
                             </div>
@@ -193,8 +204,8 @@ const UserData = () => {
                                     <span className="ms-1">*</span>
                                 </p>
                                 <input
-                                    value={city}
-                                    onChange={(e)=>setCity(e.target.value)}
+                                    value={formData.city}
+                                    name="city" onChange={(e) => addFormData(e)}
                                     className=" outline-none font-default-font-family placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
                                 />
                             </div>
@@ -205,8 +216,8 @@ const UserData = () => {
                                         <span className="ms-1">*</span>
                                     </p>
                                     <input
-                                        value={state}
-                                        onChange={(e)=>setState(e.target.value)}
+                                        value={formData.state}
+                                        name="state" onChange={(e) => addFormData(e)}
                                         className=" outline-none font-default-font-family placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
                                     />
                                 </div>
@@ -216,8 +227,8 @@ const UserData = () => {
                                         <span className="ms-1">*</span>
                                     </p>
                                     <input
-                                        value={pincode}
-                                        onChange={(e)=>setPincode(e.target.value)}
+                                        value={formData.pincode}
+                                        name="pincode" onChange={(e) => addFormData(e)}
                                         className=" outline-none font-default-font-family placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
                                     />
                                 </div>
