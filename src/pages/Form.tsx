@@ -66,7 +66,7 @@ function Form() {
     }
 
     return (
-        <div className='min-h-[100vh] flex items-center bg-background-image bg-cover bg-no-repeat' >
+        <div className='min-h-[100vh] flex items-center  bg-cover bg-no-repeat' id="form" >
             <div className='w-[100%]'>
                 <div className='mx-auto w-[100%] max-w-[450px] text-center bg-gradient-linear min-h-fit pt-7 px-8 sm:px-10 pb-8'>
                     <h2 className='text-white text-[2.1rem] mb-5'>Contact Details</h2>

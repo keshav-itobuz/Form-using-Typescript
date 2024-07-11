@@ -8,7 +8,11 @@
     }
 
     .no-scrollbar {
-        -ms-overflow-style: none; 
-        scrollbar-width: none;  
-  }
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+}
+
+#form {
+    background-image: url('./assets/Background.png')
 }
