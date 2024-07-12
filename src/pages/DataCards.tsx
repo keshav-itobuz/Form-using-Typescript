@@ -4,23 +4,15 @@ import { Link } from "react-router-dom";
 import { FaTrashAlt } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { notify } from "../utils/Toast";
+import { notifySuccess } from "../utils/Toast";
 import { RxCross2 } from 'react-icons/rx';
+import { UserData } from "../utils/interface";
 
-export interface UserData {
-    _id: string
-    name: string,
-    building: string,
-    city: string,
-    state: string,
-    pincode: string,
-    phone: string,
-    email: string
-}
-
-const UserData = () => {
+const DataCards = () => {
     const [formData, setFormData] = useState<UserData>({
         _id: '',
         name: '',
+        profession: '',
         building: '',
         city: '',
         state: '',
@@ -45,7 +37,7 @@ const UserData = () => {
             await axios.put('http://localhost:4000/updateData', {
                 formData
             })
-            notify('sucessfully updated');
+            notifySuccess('sucessfully updated');
             getData();
             setIsModalOpen(false);
         }
@@ -66,7 +58,7 @@ const UserData = () => {
     const handleDelete = async (id: string) => {
         try {
             await axios.delete(`http://localhost:4000/deleteData?id=${id}`);
-            notify('Successfully Deleted')
+            notifySuccess('Successfully Deleted')
             const filterData = userInfo.filter((item) => {
                 return item._id !== id
             })
@@ -86,6 +78,7 @@ const UserData = () => {
             _id: filteredData[0]._id,
             name: filteredData[0].name,
             building: filteredData[0].building,
+            profession: filteredData[0].profession,
             city: filteredData[0].city,
             state: filteredData[0].state,
             pincode: filteredData[0].pincode,
@@ -106,16 +99,17 @@ const UserData = () => {
 
     return (
         <div className="bg-[#0597ff22] min-h-[100vh] pb-10 px-2">
-            <div className="flex max-w-[1200px] justify-between">
-                <select className="border  outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b] cursor-pointer ms-auto" name="profession" onChange={(e) => addFormData(e)} >
-                    <option value="manager" selected disabled>Profession</option>
-                    <option value="manager">Manager</option>
-                    <option value="developer">Developer</option>
-                    <option value="designer">Designer</option>
-                    <option value="marketing">Marketing</option>
-                    <option value="hr">HR</option>
+            <div className="flex max-w-[1200px] justify-between mx-auto py-6">
+                <select className="border outline-none? py-2 rounded-md px-3 cursor-pointer" name="profession" >
+                    <option value="PROFESSION" selected disabled>Profession</option>
+                    <option value="ALL">Manager</option>
+                    <option value="MANAGER">Manager</option>
+                    <option value="DEVELOPER">Developer</option>
+                    <option value="DESIGNER">Designer</option>
+                    <option value="MARKETING">Marketing</option>
+                    <option value="HR">Hr</option>
                 </select>
-                <p className="py-6  mx-auto text-violet-900 cursor-pointer"><Link to={'/addData'} >Add Employee data</Link></p>
+                <p className=" text-violet-900 cursor-pointer me-2"><Link to={'/addData'} >Add Employee data</Link></p>
             </div>
             <div className="max-w-[1200px] mx-auto">
                 <div className=' grid grid-cols-12 bg-white py-2 border rounded-t-2xl'>
@@ -132,8 +126,8 @@ const UserData = () => {
                             <span className='col-span-2 truncate pe-2'>{data?.email}</span>
                             <span className='col-span-2 truncate'>{data?.phone === "" ? "---" : data?.phone}</span>
                             <span className="col-span-1 flex gap-8">
-                                <span className=" cursor-pointer" onClick={() => handleEdit(data._id)}><MdEdit /></span>
-                                <span className=" cursor-pointer" onClick={() => handleDelete(data._id)}><FaTrashAlt /></span>
+                                <span className=" cursor-pointer" onClick={() => { data._id && handleEdit(data._id) }}><MdEdit /></span>
+                                <span className=" cursor-pointer" onClick={() => { data._id && handleDelete(data._id) }}><FaTrashAlt /></span>
                             </span>
 
                         </div>
@@ -232,6 +226,21 @@ const UserData = () => {
                                         className=" outline-none font-default-font-family placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
                                     />
                                 </div>
+                                <div className='flex flex-col gap-1 py-2 h-[5rem]'>
+                                    <p className=" font-default-font-family text-text-grey text-[0.8rem]">
+                                        Profession
+                                        <span className="ms-1">*</span>
+                                    </p>
+                                    <select className="border outline-none? lg:p-[0.8rem] p-[0.4rem] rounded-md px-3 cursor-pointer" name="profession" value={formData.profession} onChange={(e)=>{
+                                        setFormData({ ...formData, [e.target.name]: e.target.value })
+                                    }} >
+                                        <option value="MANAGER">Manager</option>
+                                        <option value="DEVELOPER">Developer</option>
+                                        <option value="DESIGNER">Designer</option>
+                                        <option value="MARKETING">Marketing</option>
+                                        <option value="HR">Hr</option>
+                                    </select>
+                                </div>
 
                             </div>
                             <div className="flex justify-center my-5">
@@ -245,4 +254,4 @@ const UserData = () => {
     )
 }
 
-export default UserData
+export default DataCards

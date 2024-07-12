@@ -5,4 +5,10 @@ const notify = (msg: string) =>
         pauseOnFocusLoss: false,
         hideProgressBar: true
     });
-export { notify };
+const notifySuccess = (msg: string) =>
+    toast.success(msg, {
+        autoClose: 3000,
+        pauseOnFocusLoss: false,
+        hideProgressBar: true
+    });
+export { notify, notifySuccess };

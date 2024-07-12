@@ -9,18 +9,8 @@ import { FaMapLocationDot } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import { useState, FormEvent, useRef, ChangeEvent } from "react"
 import { MdHomeRepairService } from "react-icons/md";
-
+import { UserData } from "../utils/interface";
 import { notify } from "../utils/Toast";
-export interface UserData {
-    name: string,
-    profession:string,
-    building: string,
-    city: string,
-    state: string,
-    pincode: string
-    phone: string,
-    email: string
-}
 
 function Form() {
 
@@ -101,14 +91,16 @@ function Form() {
                                     <input type="number" name="phone" onChange={(e) => addFormData(e)} placeholder='Phone No' className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
                                 </div>
                                 <div className='relative'>
-                                <MdHomeRepairService className='text-white absolute start-3 top-[10px] text-[1.5rem]'  />
-                                    <select className="border w-[100%]  outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b] cursor-pointer ms-auto" name="profession" onChange={(e) => addFormData(e)} >
-                                    <option value="manager" selected disabled>Profession</option>
-                                        <option value="manager">Manager</option>
-                                        <option value="developer">Developer</option>
-                                        <option value="designer">Designer</option>
-                                        <option value="marketing">Marketing</option>
-                                        <option value="hr">HR</option>
+                                    <MdHomeRepairService className='text-white absolute start-3 top-[10px] text-[1.5rem]' />
+                                    <select className="border w-[100%]  outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b] cursor-pointer ms-auto" name="profession" onChange={(e) => {
+                                        setFormData({ ...formData, [e.target.name]: e.target.value })
+                                    }} >
+                                        <option value="PROFESSION" selected disabled>Profession</option>
+                                        <option value="MANAGER">Manager</option>
+                                        <option value="DEVELOPER">Developer</option>
+                                        <option value="DESIGNER">Designer</option>
+                                        <option value="MARKETING">Marketing</option>
+                                        <option value="HR">Hr</option>
                                     </select>
                                 </div>
                             </div>

@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Form from "./pages/Form.tsx"
-import UserData from "./pages/UserData.tsx"
+import UserData from "./pages/DataCards.tsx"
 import { ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
