@@ -6,6 +6,6 @@ export interface UserData {
     city: string,
     state: string,
     pincode: string
-    phone: string,
+    phone?: string,
     email: string
 }

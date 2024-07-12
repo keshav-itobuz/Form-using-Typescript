@@ -21,7 +21,6 @@ function Form() {
         city: '',
         state: '',
         pincode: '',
-        phone: '',
         email: ''
     })
     const [showOtherSection, setShowOtherSection] = useState<boolean>(false);
@@ -36,7 +35,6 @@ function Form() {
                 notify('Fill all the fields')
                 return;
             }
-
             await axios.post('http://localhost:4000/saveData', {
                 formData
             })
@@ -51,7 +49,7 @@ function Form() {
 
     const handleNext = (e: FormEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        if (!formData.name || !formData.email) {
+        if (!formData.name || !formData.email || !formData.profession) {
             notify('Fill all the fields');
             return;
         }
@@ -59,7 +57,6 @@ function Form() {
             alert('Invalid email')
             return;
         }
-        console.log(formData.profession)
         formRef.current && formRef.current.reset();
         setShowOtherSection(true);
     }
@@ -95,12 +92,12 @@ function Form() {
                                     <select className="border w-[100%]  outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b] cursor-pointer ms-auto" name="profession" onChange={(e) => {
                                         setFormData({ ...formData, [e.target.name]: e.target.value })
                                     }} >
-                                        <option value="PROFESSION" selected disabled>Profession</option>
-                                        <option value="MANAGER">Manager</option>
-                                        <option value="DEVELOPER">Developer</option>
-                                        <option value="DESIGNER">Designer</option>
-                                        <option value="MARKETING">Marketing</option>
-                                        <option value="HR">Hr</option>
+                                        <option value="profession" selected disabled>Profession</option>
+                                        <option value="manager">Manager</option>
+                                        <option value="developer">Developer</option>
+                                        <option value="designer">Designer</option>
+                                        <option value="marketing">Marketing</option>
+                                        <option value="hr">Hr</option>
                                     </select>
                                 </div>
                             </div>

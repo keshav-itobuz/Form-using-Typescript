@@ -7,6 +7,7 @@ import { notify } from "../utils/Toast";
 import { notifySuccess } from "../utils/Toast";
 import { RxCross2 } from 'react-icons/rx';
 import { UserData } from "../utils/interface";
+import { confirmAlert } from "../utils/confirmAlert";
 
 const DataCards = () => {
     const [formData, setFormData] = useState<UserData>({
@@ -38,16 +39,17 @@ const DataCards = () => {
                 formData
             })
             notifySuccess('sucessfully updated');
-            getData();
+            getData('all');
             setIsModalOpen(false);
         }
         catch (error) {
             console.log(error);
         }
     }
-    const getData = async () => {
+
+    const getData = async (profession: string) => {
         try {
-            const userData = await axios.get('http://localhost:4000/getData')
+            const userData = await axios.get(`http://localhost:4000/getData?profession=${profession}`)
             setUserInfo(userData.data.data);
         }
         catch (error) {
@@ -58,11 +60,20 @@ const DataCards = () => {
     const handleDelete = async (id: string) => {
         try {
             await axios.delete(`http://localhost:4000/deleteData?id=${id}`);
-            notifySuccess('Successfully Deleted')
             const filterData = userInfo.filter((item) => {
                 return item._id !== id
             })
             setUserInfo(filterData);
+        }
+        catch (error) {
+            console.log(error)
+        }
+    }
+
+    const handleDeleteAll = async () => {
+        try {
+            await axios.delete(`http://localhost:4000/deleteAll`);
+            setUserInfo([]);
         }
         catch (error) {
             console.log(error)
@@ -94,21 +105,33 @@ const DataCards = () => {
     }
 
     useEffect(() => {
-        getData();
+        getData('all');
     }, []);
 
     return (
         <div className="bg-[#0597ff22] min-h-[100vh] pb-10 px-2">
             <div className="flex max-w-[1200px] justify-between mx-auto py-6">
-                <select className="border outline-none? py-2 rounded-md px-3 cursor-pointer" name="profession" >
-                    <option value="PROFESSION" selected disabled>Profession</option>
-                    <option value="ALL">Manager</option>
-                    <option value="MANAGER">Manager</option>
-                    <option value="DEVELOPER">Developer</option>
-                    <option value="DESIGNER">Designer</option>
-                    <option value="MARKETING">Marketing</option>
-                    <option value="HR">Hr</option>
-                </select>
+                <div className="flex gap-1">
+                    <select className="border outline-none? py-2 rounded-md px-3 cursor-pointer" name="profession" onChange={(e) => getData(e.target.value)} >
+                        <option value="PROFESSION" selected disabled>Profession</option>
+                        <option value="all">All</option>
+                        <option value="manager">Manager</option>
+                        <option value="developer">Developer</option>
+                        <option value="designer">Designer</option>
+                        <option value="marketing">Marketing</option>
+                        <option value="hr">Hr</option>
+                    </select>
+                    <div className="flex justify-center">
+                        <button type="submit" className=" text-white px-5 py-2 border-2 bg-red-700 hover:bg-red-800 rounded-md " onClick={() => {
+                            if (!userInfo.length) {
+                                notify('No data to delete')
+                                return;
+                            }
+                            confirmAlert(handleDeleteAll)
+                        }
+                        }>Delete All</button>
+                    </div>
+                </div>
                 <p className=" text-violet-900 cursor-pointer me-2"><Link to={'/addData'} >Add Employee data</Link></p>
             </div>
             <div className="max-w-[1200px] mx-auto">
@@ -124,12 +147,11 @@ const DataCards = () => {
                             <span className='col-span-2 ms-3 truncate'>{data?.name[0].toLocaleUpperCase() + data?.name.slice(1)} </span>
                             <span className='col-span-5 pe-3'>{`${data?.building} ${data?.city} ${data?.state} - ${data?.pincode}`}</span>
                             <span className='col-span-2 truncate pe-2'>{data?.email}</span>
-                            <span className='col-span-2 truncate'>{data?.phone === "" ? "---" : data?.phone}</span>
+                            <span className='col-span-2 truncate'>{!data?.phone ? "---" : data?.phone}</span>
                             <span className="col-span-1 flex gap-8">
                                 <span className=" cursor-pointer" onClick={() => { data._id && handleEdit(data._id) }}><MdEdit /></span>
-                                <span className=" cursor-pointer" onClick={() => { data._id && handleDelete(data._id) }}><FaTrashAlt /></span>
+                                <span className=" cursor-pointer" onClick={() => { confirmAlert(() => { data._id && handleDelete(data._id) }) }}><FaTrashAlt /></span>
                             </span>
-
                         </div>
 
                     ))}
@@ -231,14 +253,14 @@ const DataCards = () => {
                                         Profession
                                         <span className="ms-1">*</span>
                                     </p>
-                                    <select className="border outline-none? lg:p-[0.8rem] p-[0.4rem] rounded-md px-3 cursor-pointer" name="profession" value={formData.profession} onChange={(e)=>{
+                                    <select className="border outline-none? lg:p-[0.8rem] p-[0.4rem] rounded-md px-3 cursor-pointer" name="profession" value={formData.profession} onChange={(e) => {
                                         setFormData({ ...formData, [e.target.name]: e.target.value })
                                     }} >
-                                        <option value="MANAGER">Manager</option>
-                                        <option value="DEVELOPER">Developer</option>
-                                        <option value="DESIGNER">Designer</option>
-                                        <option value="MARKETING">Marketing</option>
-                                        <option value="HR">Hr</option>
+                                        <option value="manager">Manager</option>
+                                        <option value="developer">Developer</option>
+                                        <option value="designer">Designer</option>
+                                        <option value="marketing">Marketing</option>
+                                        <option value="hr">Hr</option>
                                     </select>
                                 </div>
 
