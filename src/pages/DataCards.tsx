@@ -23,6 +23,8 @@ const DataCards = () => {
     })
     const [userInfo, setUserInfo] = useState<Array<UserData>>([]);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+    const [pageNumber, setPageNumber] = useState<number>(0);
+    const [totalPage, setTotalPage] = useState<number>(1);
     const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/
 
     const handleSubmit = async () => {
@@ -39,7 +41,7 @@ const DataCards = () => {
                 formData
             })
             notifySuccess('sucessfully updated');
-            getData('all');
+            getData('all', pageNumber);
             setIsModalOpen(false);
         }
         catch (error) {
@@ -47,10 +49,12 @@ const DataCards = () => {
         }
     }
 
-    const getData = async (profession: string) => {
+    const getData = async (profession: string, page: number) => {
         try {
-            const userData = await axios.get(`http://localhost:4000/getData?profession=${profession}`)
-            setUserInfo(userData.data.data);
+            const userData = await axios.get(`http://localhost:4000/getData?profession=${profession}&page=${page}`)
+            setUserInfo(userData.data.data.userData);
+            setTotalPage(userData.data.data.total);
+            console.log(userData)
         }
         catch (error) {
             console.log(error);
@@ -105,14 +109,14 @@ const DataCards = () => {
     }
 
     useEffect(() => {
-        getData('all');
-    }, []);
+        getData('all', pageNumber);
+    }, [pageNumber]);
 
     return (
         <div className="bg-[#0597ff22] min-h-[100vh] pb-10 px-2">
             <div className="flex max-w-[1200px] justify-between mx-auto py-6">
                 <div className="flex gap-1">
-                    <select className="border outline-none? py-2 rounded-md px-3 cursor-pointer" name="profession" onChange={(e) => getData(e.target.value)} >
+                    <select className="border outline-none? py-2 rounded-md px-3 cursor-pointer" name="profession" onChange={(e) => getData(e.target.value, pageNumber)} >
                         <option value="PROFESSION" selected disabled>Profession</option>
                         <option value="all">All</option>
                         <option value="manager">Manager</option>
@@ -141,7 +145,7 @@ const DataCards = () => {
                     <span className='col-span-2'>Email</span>
                     <span className='col-span-2 '>Phone No</span>
                 </div>
-                <div className=" max-h-[75vh] overflow-y-scroll no-scrollbar">
+                <div className=" max-h-[70vh] overflow-y-scroll no-scrollbar]">
                     {userInfo.map((data, index) => (
                         <div className=' grid grid-cols-12 bg-white border py-4' key={index}>
                             <span className='col-span-2 ms-3 truncate'>{data?.name[0].toLocaleUpperCase() + data?.name.slice(1)} </span>
@@ -156,6 +160,11 @@ const DataCards = () => {
 
                     ))}
                 </div>
+            </div>
+            <div className="flex justify-center mt-10 max-w-[1200px] absolute left-[45%] bottom-10  gap-5">
+                <button type="submit" className=" bg-[#1444EF] border border-[#1444EF] text-white lg:p-3 p-[0.6rem] font-default-font-family hover:bg-transparent hover:text-[#1444EF] lg:rounded-md rounded-sm lg:text-normal text-[0.8rem]" onClick={() => { pageNumber > 0 ? setPageNumber(pageNumber - 1) : notify('You are on first Page')}}>Back</button>
+                <span className="mt-2">{pageNumber + 1}</span>
+                <button type="submit" className=" bg-[#1444EF] border border-[#1444EF] text-white lg:p-3 p-[0.6rem] font-default-font-family hover:bg-transparent hover:text-[#1444EF] lg:rounded-md rounded-sm lg:text-normal text-[0.8rem]" onClick={() => { pageNumber < totalPage-1 ? setPageNumber(pageNumber + 1): notify('You are on last Page') }}>Next</button>
             </div>
             {isModalOpen &&
                 <div>

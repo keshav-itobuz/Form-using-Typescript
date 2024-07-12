@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, FormEvent, useRef, ChangeEvent } from "react"
 import { MdHomeRepairService } from "react-icons/md";
 import { UserData } from "../utils/interface";
-import { notify } from "../utils/Toast";
+import { notify, notifySuccess } from "../utils/Toast";
 
 function Form() {
 
@@ -41,6 +41,7 @@ function Form() {
             formRef.current && formRef.current.reset();
             setShowOtherSection(false);
             navigate("/");
+            notifySuccess("Successfully added the data")
         }
         catch (error) {
             console.log(error);
