@@ -1,63 +1,33 @@
 import axios from "axios";
-import { ChangeEvent, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { FaTrashAlt } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { notify } from "../utils/Toast";
-import { notifySuccess } from "../utils/Toast";
-import { RxCross2 } from 'react-icons/rx';
-import { UserData } from "../utils/interface";
+import { FormData } from "../utils/interface";
 import { confirmAlert } from "../utils/confirmAlert";
 import { FaCaretRight } from "react-icons/fa";
 import { FaCaretLeft } from "react-icons/fa";
 
+type PropsType = {
+    setUpdatedFormData: React.Dispatch<React.SetStateAction<FormData>>
+}
 
-const DataCards = () => {
-    const [formData, setFormData] = useState<UserData>({
-        _id: '',
-        name: '',
-        profession: '',
-        building: '',
-        city: '',
-        state: '',
-        pincode: '',
-        phone: '',
-        email: ''
-    })
-    const [userInfo, setUserInfo] = useState<Array<UserData>>([]);
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+
+const DataCards = (props: PropsType) => {
+    const { setUpdatedFormData } = props;
+    const [userInfo, setUserInfo] = useState<Array<FormData>>([]);
     const [pageNumber, setPageNumber] = useState<number>(0);
     const [totalPage, setTotalPage] = useState<number>(1);
-    const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/
+    const navigate = useNavigate()
 
-    const handleSubmit = async () => {
-        try {
-            if (!formData.building || !formData.state || !formData.city || !formData.pincode) {
-                notify('Fill all the fields')
-                return;
-            }
-            if (!formData.email.match(emailRegex)) {
-                alert('Invalid email')
-                return;
-            }
-            await axios.put('http://localhost:4000/updateData', {
-                formData
-            })
-            notifySuccess('sucessfully updated');
-            getData('all', pageNumber);
-            setIsModalOpen(false);
-        }
-        catch (error) {
-            console.log(error);
-        }
-    }
+
 
     const getData = async (profession: string, page: number) => {
         try {
             const userData = await axios.get(`http://localhost:4000/getData?profession=${profession}&page=${page}`)
             setUserInfo(userData.data.data.userData);
             setTotalPage(userData.data.data.total);
-            console.log(userData)
         }
         catch (error) {
             console.log(error);
@@ -88,7 +58,6 @@ const DataCards = () => {
     }
 
     const handleEdit = (id: string) => {
-        setIsModalOpen(true);
         const filteredData = userInfo.filter((item) => {
             return item._id === id
         })
@@ -103,12 +72,9 @@ const DataCards = () => {
             phone: filteredData[0].phone,
             email: filteredData[0].email,
         }
-        setFormData(updatingData);
+        setUpdatedFormData(updatingData);
+        navigate('/addData');
 
-    }
-
-    const addFormData = (event: ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [event.target.name]: event.target.value })
     }
 
     useEffect(() => {
@@ -169,121 +135,6 @@ const DataCards = () => {
                 <span className=" text-[1.1rem] mt-1 w-[10px]">{pageNumber + 1}</span>
                 <button type="submit" className=" bg-[#1444EF] border border-[#1444EF] text-white lg:p-3 p-[0.6rem]  hover:bg-transparent hover:text-[#1444EF] lg:rounded-md rounded-sm lg:text-normal text-[0.8rem] pt-2" onClick={() => { pageNumber < totalPage - 1 ? setPageNumber(pageNumber + 1) : notify('You are on last Page') }}><FaCaretRight /></button>
             </div>
-            {isModalOpen &&
-                <div>
-                    <div className=" z-10 fixed inset-0 bg-black bg-opacity-30  backdrop-blur-sm flex ">
-                        <div className=" bg-white rounded-2xl m-auto p-7 flex-col gap-5 items-center w-[90%] sm:w-[70%] md:w-auto ">
-                            <div className="flex justify-between sm:gap-[200px]">
-                                <h2 className="text-[1.2rem] font-medium">Edit Response</h2>
-                                <button
-                                    className="border border-gray-300 rounded-md px-1 "
-                                    onClick={() => setIsModalOpen(false)}
-                                >
-                                    <RxCross2 />
-                                </button>
-                            </div>
-                            <div className="flex flex-col gap-1 py-2 h-[5rem]">
-                                <p className="  text-text-grey text-[0.8rem]">
-                                    Name
-                                    <span className="ms-1 text-red-700">*</span>
-                                </p>
-                                <input
-                                    value={formData.name}
-                                    name="name"
-                                    onChange={(e) => addFormData(e)}
-                                    className=" outline-none  placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
-                                />
-                            </div>
-                            <div className="flex flex-col gap-1 py-2 h-[5rem]">
-                                <p className="  text-text-grey text-[0.8rem]">
-                                    Email
-                                    <span className="ms-1 text-red-700">*</span>
-                                </p>
-                                <input
-                                    value={formData.email}
-                                    name="email" onChange={(e) => addFormData(e)}
-                                    className=" outline-none  placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
-                                />
-                            </div>
-                            <div className="flex flex-col gap-1 py-2 h-[5rem]">
-                                <p className="  text-text-grey text-[0.8rem]">
-                                    Phone No
-                                </p>
-                                <input
-                                    value={formData.phone}
-                                    name="phone" onChange={(e) => addFormData(e)}
-                                    className=" outline-none  placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
-                                />
-                            </div>
-                            <div className="flex flex-col gap-1 py-2 h-[5rem]">
-                                <p className="  text-text-grey text-[0.8rem]">
-                                    Building , Street
-                                    <span className="ms-1">*</span>
-                                </p>
-                                <input
-                                    value={formData.building}
-                                    name="building" onChange={(e) => addFormData(e)}
-                                    className=" outline-none  placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
-                                />
-                            </div>
-                            <div className="flex flex-col gap-1 py-2 h-[5rem]">
-                                <p className="  text-text-grey text-[0.8rem]">
-                                    City
-                                    <span className="ms-1">*</span>
-                                </p>
-                                <input
-                                    value={formData.city}
-                                    name="city" onChange={(e) => addFormData(e)}
-                                    className=" outline-none  placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
-                                />
-                            </div>
-                            <div className="flex gap-2">
-                                <div className="flex flex-col gap-1 py-2 h-[5rem]">
-                                    <p className="  text-text-grey text-[0.8rem]">
-                                        State
-                                        <span className="ms-1">*</span>
-                                    </p>
-                                    <input
-                                        value={formData.state}
-                                        name="state" onChange={(e) => addFormData(e)}
-                                        className=" outline-none  placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
-                                    />
-                                </div>
-                                <div className="flex flex-col gap-1 py-2 h-[5rem]">
-                                    <p className="  text-text-grey text-[0.8rem]">
-                                        Pincode
-                                        <span className="ms-1">*</span>
-                                    </p>
-                                    <input
-                                        value={formData.pincode}
-                                        name="pincode" onChange={(e) => addFormData(e)}
-                                        className=" outline-none  placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
-                                    />
-                                </div>
-                                <div className='flex flex-col gap-1 py-2 h-[5rem]'>
-                                    <p className="  text-text-grey text-[0.8rem]">
-                                        Profession
-                                        <span className="ms-1">*</span>
-                                    </p>
-                                    <select className="border outline-none? lg:p-[0.8rem] p-[0.4rem] rounded-md px-3 cursor-pointer" name="profession" value={formData.profession} onChange={(e) => {
-                                        setFormData({ ...formData, [e.target.name]: e.target.value })
-                                    }} >
-                                        <option value="manager">Manager</option>
-                                        <option value="developer">Developer</option>
-                                        <option value="designer">Designer</option>
-                                        <option value="marketing">Marketing</option>
-                                        <option value="hr">Hr</option>
-                                    </select>
-                                </div>
-
-                            </div>
-                            <div className="flex justify-center my-5">
-                                <button type="submit" className="w-[100%] bg-[#1444EF] border border-[#1444EF] text-white lg:p-3 p-[0.6rem]  hover:bg-transparent hover:text-[#1444EF] lg:rounded-md rounded-sm lg:text-normal text-[0.8rem]" onClick={handleSubmit}>Submit</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
         </div>
     )
 }

@@ -9,19 +9,23 @@ import { FaMapLocationDot } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import { useState, FormEvent, useRef, ChangeEvent } from "react"
 import { MdHomeRepairService } from "react-icons/md";
-import { UserData } from "../utils/interface";
+import { FormData } from "../utils/interface";
 import { notify, notifySuccess } from "../utils/Toast";
 
-function Form() {
+interface PropsInterface {
+    updatedFormData: FormData
+}
 
-    const [formData, setFormData] = useState<UserData>({
-        name: '',
-        profession: '',
-        building: '',
-        city: '',
-        state: '',
-        pincode: '',
-        email: ''
+const Form = (updatedFormData : PropsInterface) => {
+
+    const [formData, setFormData] = useState<FormData>({
+        name: updatedFormData.updatedFormData.name,
+        profession: updatedFormData.updatedFormData.profession,
+        building: updatedFormData.updatedFormData.building,
+        city: updatedFormData.updatedFormData.city,
+        state: updatedFormData.updatedFormData.state,
+        pincode: updatedFormData.updatedFormData.pincode,
+        email: updatedFormData.updatedFormData.email
     })
     const [showOtherSection, setShowOtherSection] = useState<boolean>(false);
     const formRef = useRef<HTMLFormElement>(null)
@@ -48,6 +52,27 @@ function Form() {
         }
     }
 
+    const handleUpdate = async () => {
+        try {
+            if (!formData.building || !formData.state || !formData.city || !formData.pincode || !formData.profession) {
+                notify('Fill all the fields')
+                return;
+            }
+            if (!formData.email.match(emailRegex)) {
+                alert('Invalid email')
+                return;
+            }
+            await axios.put('http://localhost:4000/updateData', {
+                formData
+            })
+            navigate("/");
+            notifySuccess('sucessfully updated');
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
     const handleNext = (e: FormEvent<HTMLButtonElement>) => {
         e.preventDefault();
         if (!formData.name || !formData.email || !formData.profession) {
@@ -61,9 +86,11 @@ function Form() {
         formRef.current && formRef.current.reset();
         setShowOtherSection(true);
     }
+
     const addFormData = (event: ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [event.target.name]: event.target.value })
     }
+
     return (
         <div className='min-h-[100vh] flex items-center  bg-cover bg-no-repeat' id="form" >
             <div className='w-[100%]'>
@@ -78,22 +105,22 @@ function Form() {
                             <div className='flex flex-col gap-5'>
                                 <div className='relative'>
                                     <FaUser className='text-white absolute start-3 top-[9px] text-[1.5rem]' />
-                                    <input type="text" placeholder='Name*' name='name' id="name" onChange={(e) => addFormData(e)} className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
+                                    <input type="text" placeholder='Name*' name='name' value={formData.name} id="name" onChange={(e) => addFormData(e)} className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
                                 </div>
                                 <div className='relative'>
                                     <IoIosMail className='text-white absolute start-3 top-[9px] text-[1.5rem]' />
-                                    <input type="email" placeholder='Email*' name="email" onChange={(e) => addFormData(e)} className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
+                                    <input type="email" placeholder='Email*' name="email" value={formData.email} onChange={(e) => addFormData(e)} className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
                                 </div>
                                 <div className='relative'>
                                     <FaPhone className='text-white absolute start-3 top-[12px] text-[1.3rem]' />
-                                    <input type="number" name="phone" onChange={(e) => addFormData(e)} placeholder='Phone No' className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
+                                    <input type="number" name="phone" value={formData.phone} onChange={(e) => addFormData(e)} placeholder='Phone No' className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
                                 </div>
                                 <div className='relative'>
                                     <MdHomeRepairService className='text-white absolute start-3 top-[10px] text-[1.5rem]' />
-                                    <select className="border w-[100%]  outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b] cursor-pointer ms-auto" name="profession" onChange={(e) => {
+                                    <select className="border w-[100%]  outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b] cursor-pointer ms-auto" name="profession" defaultValue={formData.profession} onChange={(e) => {
                                         setFormData({ ...formData, [e.target.name]: e.target.value })
                                     }} >
-                                        <option value="profession" selected disabled>Profession</option>
+                                        <option value="profession" disabled>Profession</option>
                                         <option value="manager">Manager</option>
                                         <option value="developer">Developer</option>
                                         <option value="designer">Designer</option>
@@ -111,25 +138,31 @@ function Form() {
                             <div className='flex flex-col gap-5'>
                                 <div className='relative'>
                                     <MdOutlineLocationCity className='text-white absolute start-3 top-[9px] text-[1.5rem] ' />
-                                    <input type="text" placeholder='Building , Street*' name="building" onChange={(e) => addFormData(e)} className=' pe-3 border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
+                                    <input type="text" placeholder='Building , Street*' name="building" value={formData.building} onChange={(e) => addFormData(e)} className=' pe-3 border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
                                 </div>
                                 <div className='relative'>
                                     <FaAddressCard className='text-white absolute start-3 top-[9px] text-[1.5rem]' />
-                                    <input type="text" placeholder='City*' name="city" onChange={(e) => addFormData(e)} className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
+                                    <input type="text" placeholder='City*' name="city" value={formData.city} onChange={(e) => addFormData(e)} className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
                                 </div>
                                 <div className='relative'>
                                     <FaMapLocationDot className='text-white absolute start-3 top-[12px] text-[1.3rem]' />
-                                    <input type="text" placeholder='State*' name="state" onChange={(e) => addFormData(e)} className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
+                                    <input type="text" placeholder='State*' name="state" value={formData.state} onChange={(e) => addFormData(e)} className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
                                 </div>
                                 <div className='relative'>
                                     <TbMapPinCode className='text-white absolute start-3 top-[12px] text-[1.3rem]' />
-                                    <input type="number" placeholder='Pincode*' name="pincode" onChange={(e) => addFormData(e)} className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
+                                    <input type="number" placeholder='Pincode*' name="pincode" value={formData.pincode} onChange={(e) => addFormData(e)} className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
                                 </div>
 
                             </div>
-                            <div className="flex justify-center my-5">
-                                <button type="submit" className="bg-gradient-linear-right text-white px-10 py-2 hover:bg-none hover:border-[#3d176b] hover:text-[#3d176b] border-2 rounded-full lg:text-normal">Submit</button>
-                            </div>
+                            {updatedFormData.updatedFormData._id ?
+                                <div className="flex justify-center my-5">
+                                    <button type="button" className="bg-gradient-linear-right text-white px-10 py-2 hover:bg-none hover:border-[#3d176b] hover:text-[#3d176b] border-2 rounded-full lg:text-normal" onClick={handleUpdate}>Update</button>
+                                </div>
+                                :
+                                <div className="flex justify-center my-5">
+                                    <button type="submit" className="bg-gradient-linear-right text-white px-10 py-2 hover:bg-none hover:border-[#3d176b] hover:text-[#3d176b] border-2 rounded-full lg:text-normal">Submit</button>
+                                </div>
+                            }
                         </div>}
                 </form>
             </div >
