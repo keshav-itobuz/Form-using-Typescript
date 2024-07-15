@@ -101,8 +101,10 @@ const DataCards = (props: PropsType) => {
         <div className="bg-[#0597ff22] min-h-[100vh] pb-10 px-2">
             <div className="flex max-w-[1200px] justify-between mx-auto py-6">
                 <div className="flex gap-1">
-                    <select className="border outline-none? py-2 rounded-md px-3 cursor-pointer" name="profession" onChange={(e) => getData(e.target.value, pageNumber)} >
-                        <option value="PROFESSION" selected disabled>Profession</option>
+                    <select className="border outline-none py-2 rounded-md px-3 cursor-pointer" name="profession" onChange={(e) => {
+                        getData(e.target.value, 0)
+                        setPageNumber(0)
+                    }} >
                         <option value="all">All</option>
                         <option value="manager">Manager</option>
                         <option value="developer">Developer</option>
@@ -121,7 +123,7 @@ const DataCards = (props: PropsType) => {
                         }>Delete All</button>
                     </div>
                 </div>
-                <p className=" text-violet-900 cursor-pointer me-2" onClick={handleNewEntry }>Add Employee data</p>
+                <p className=" text-violet-900 cursor-pointer me-2" onClick={handleNewEntry}>Add Employee data</p>
             </div>
             <div className="max-w-[1200px] mx-auto">
                 <div className=' grid grid-cols-12 bg-white py-2 border rounded-t-2xl'>
@@ -142,7 +144,6 @@ const DataCards = (props: PropsType) => {
                                 <span className=" cursor-pointer" onClick={() => { confirmAlert(() => { data._id && handleDelete(data._id) }) }}><FaTrashAlt /></span>
                             </span>
                         </div>
-
                     ))}
                 </div>
             </div>
