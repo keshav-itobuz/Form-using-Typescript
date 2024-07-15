@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Form from "./pages/Form.tsx"
-import UserData from "./pages/DataCards.tsx"
+import DataCard from "./pages/DataCards.tsx"
 import { FormData } from "./utils/interface.ts";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -21,7 +21,7 @@ function App() {
     <BrowserRouter>
       <ToastContainer />
       <Routes>
-        <Route index element={<UserData setUpdatedFormData={setUpdatedFormData}/>} />
+        <Route index element={<DataCard setUpdatedFormData={setUpdatedFormData}/>} />
         <Route path="addData" element={<Form updatedFormData={updatedFormData} />} />
       </Routes>
     </BrowserRouter>
