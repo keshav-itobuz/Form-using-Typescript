@@ -8,6 +8,9 @@ import { notifySuccess } from "../utils/Toast";
 import { RxCross2 } from 'react-icons/rx';
 import { UserData } from "../utils/interface";
 import { confirmAlert } from "../utils/confirmAlert";
+import { FaCaretRight } from "react-icons/fa";
+import { FaCaretLeft } from "react-icons/fa";
+
 
 const DataCards = () => {
     const [formData, setFormData] = useState<UserData>({
@@ -162,9 +165,9 @@ const DataCards = () => {
                 </div>
             </div>
             <div className="flex justify-center mt-10 max-w-[1200px] absolute left-[45%] bottom-10  gap-5">
-                <button type="submit" className=" bg-[#1444EF] border border-[#1444EF] text-white lg:p-3 p-[0.6rem] font-default-font-family hover:bg-transparent hover:text-[#1444EF] lg:rounded-md rounded-sm lg:text-normal text-[0.8rem]" onClick={() => { pageNumber > 0 ? setPageNumber(pageNumber - 1) : notify('You are on first Page')}}>Back</button>
-                <span className="mt-2">{pageNumber + 1}</span>
-                <button type="submit" className=" bg-[#1444EF] border border-[#1444EF] text-white lg:p-3 p-[0.6rem] font-default-font-family hover:bg-transparent hover:text-[#1444EF] lg:rounded-md rounded-sm lg:text-normal text-[0.8rem]" onClick={() => { pageNumber < totalPage-1 ? setPageNumber(pageNumber + 1): notify('You are on last Page') }}>Next</button>
+                <button type="submit" className=" bg-[#1444EF] border border-[#1444EF] text-white lg:p-3 p-[0.6rem]  hover:bg-transparent hover:text-[#1444EF] lg:rounded-md rounded-sm lg:text-normal text-[0.8rem]" onClick={() => { pageNumber > 0 ? setPageNumber(pageNumber - 1) : notify('You are on first Page') }}><FaCaretLeft /></button>
+                <span className=" text-[1.1rem] mt-1 w-[10px]">{pageNumber + 1}</span>
+                <button type="submit" className=" bg-[#1444EF] border border-[#1444EF] text-white lg:p-3 p-[0.6rem]  hover:bg-transparent hover:text-[#1444EF] lg:rounded-md rounded-sm lg:text-normal text-[0.8rem] pt-2" onClick={() => { pageNumber < totalPage - 1 ? setPageNumber(pageNumber + 1) : notify('You are on last Page') }}><FaCaretRight /></button>
             </div>
             {isModalOpen &&
                 <div>
@@ -180,7 +183,7 @@ const DataCards = () => {
                                 </button>
                             </div>
                             <div className="flex flex-col gap-1 py-2 h-[5rem]">
-                                <p className=" font-default-font-family text-text-grey text-[0.8rem]">
+                                <p className="  text-text-grey text-[0.8rem]">
                                     Name
                                     <span className="ms-1 text-red-700">*</span>
                                 </p>
@@ -188,77 +191,77 @@ const DataCards = () => {
                                     value={formData.name}
                                     name="name"
                                     onChange={(e) => addFormData(e)}
-                                    className=" outline-none font-default-font-family placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
+                                    className=" outline-none  placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
                                 />
                             </div>
                             <div className="flex flex-col gap-1 py-2 h-[5rem]">
-                                <p className=" font-default-font-family text-text-grey text-[0.8rem]">
+                                <p className="  text-text-grey text-[0.8rem]">
                                     Email
                                     <span className="ms-1 text-red-700">*</span>
                                 </p>
                                 <input
                                     value={formData.email}
                                     name="email" onChange={(e) => addFormData(e)}
-                                    className=" outline-none font-default-font-family placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
+                                    className=" outline-none  placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
                                 />
                             </div>
                             <div className="flex flex-col gap-1 py-2 h-[5rem]">
-                                <p className=" font-default-font-family text-text-grey text-[0.8rem]">
+                                <p className="  text-text-grey text-[0.8rem]">
                                     Phone No
                                 </p>
                                 <input
                                     value={formData.phone}
                                     name="phone" onChange={(e) => addFormData(e)}
-                                    className=" outline-none font-default-font-family placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
+                                    className=" outline-none  placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
                                 />
                             </div>
                             <div className="flex flex-col gap-1 py-2 h-[5rem]">
-                                <p className=" font-default-font-family text-text-grey text-[0.8rem]">
+                                <p className="  text-text-grey text-[0.8rem]">
                                     Building , Street
                                     <span className="ms-1">*</span>
                                 </p>
                                 <input
                                     value={formData.building}
                                     name="building" onChange={(e) => addFormData(e)}
-                                    className=" outline-none font-default-font-family placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
+                                    className=" outline-none  placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
                                 />
                             </div>
                             <div className="flex flex-col gap-1 py-2 h-[5rem]">
-                                <p className=" font-default-font-family text-text-grey text-[0.8rem]">
+                                <p className="  text-text-grey text-[0.8rem]">
                                     City
                                     <span className="ms-1">*</span>
                                 </p>
                                 <input
                                     value={formData.city}
                                     name="city" onChange={(e) => addFormData(e)}
-                                    className=" outline-none font-default-font-family placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
+                                    className=" outline-none  placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
                                 />
                             </div>
                             <div className="flex gap-2">
                                 <div className="flex flex-col gap-1 py-2 h-[5rem]">
-                                    <p className=" font-default-font-family text-text-grey text-[0.8rem]">
+                                    <p className="  text-text-grey text-[0.8rem]">
                                         State
                                         <span className="ms-1">*</span>
                                     </p>
                                     <input
                                         value={formData.state}
                                         name="state" onChange={(e) => addFormData(e)}
-                                        className=" outline-none font-default-font-family placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
+                                        className=" outline-none  placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
                                     />
                                 </div>
                                 <div className="flex flex-col gap-1 py-2 h-[5rem]">
-                                    <p className=" font-default-font-family text-text-grey text-[0.8rem]">
+                                    <p className="  text-text-grey text-[0.8rem]">
                                         Pincode
                                         <span className="ms-1">*</span>
                                     </p>
                                     <input
                                         value={formData.pincode}
                                         name="pincode" onChange={(e) => addFormData(e)}
-                                        className=" outline-none font-default-font-family placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
+                                        className=" outline-none  placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
                                     />
                                 </div>
                                 <div className='flex flex-col gap-1 py-2 h-[5rem]'>
-                                    <p className=" font-default-font-family text-text-grey text-[0.8rem]">
+                                    <p className="  text-text-grey text-[0.8rem]">
                                         Profession
                                         <span className="ms-1">*</span>
                                     </p>
@@ -275,7 +278,7 @@ const DataCards = () => {
 
                             </div>
                             <div className="flex justify-center my-5">
-                                <button type="submit" className="w-[100%] bg-[#1444EF] border border-[#1444EF] text-white lg:p-3 p-[0.6rem] font-default-font-family hover:bg-transparent hover:text-[#1444EF] lg:rounded-md rounded-sm lg:text-normal text-[0.8rem]" onClick={handleSubmit}>Submit</button>
+                                <button type="submit" className="w-[100%] bg-[#1444EF] border border-[#1444EF] text-white lg:p-3 p-[0.6rem]  hover:bg-transparent hover:text-[#1444EF] lg:rounded-md rounded-sm lg:text-normal text-[0.8rem]" onClick={handleSubmit}>Submit</button>
                             </div>
                         </div>
                     </div>
