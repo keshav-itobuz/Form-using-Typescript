@@ -11,12 +11,13 @@ import { useState, FormEvent, useRef, ChangeEvent } from "react"
 import { MdHomeRepairService } from "react-icons/md";
 import { FormData } from "../utils/interface";
 import { notify, notifySuccess } from "../utils/Toast";
+import GenericInput from "../components/GenericInput";
 
 interface PropsInterface {
     updatedFormData: FormData
 }
 
-const Form = (updatedFormData : PropsInterface) => {
+const Form = (updatedFormData: PropsInterface) => {
 
     const [formData, setFormData] = useState<FormData>({
         name: updatedFormData.updatedFormData.name,
@@ -67,6 +68,7 @@ const Form = (updatedFormData : PropsInterface) => {
             })
             navigate("/");
             notifySuccess('sucessfully updated');
+
         }
         catch (error) {
             console.log(error);
@@ -105,22 +107,22 @@ const Form = (updatedFormData : PropsInterface) => {
                             <div className='flex flex-col gap-5'>
                                 <div className='relative'>
                                     <FaUser className='text-white absolute start-3 top-[9px] text-[1.5rem]' />
-                                    <input type="text" placeholder='Name*' name='name' value={formData.name} id="name" onChange={(e) => addFormData(e)} className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
+                                    <GenericInput type="text" placeholder='Name*' name='name' value={formData.name} onChange={(e) => addFormData(e)} />
                                 </div>
                                 <div className='relative'>
                                     <IoIosMail className='text-white absolute start-3 top-[9px] text-[1.5rem]' />
-                                    <input type="email" placeholder='Email*' name="email" value={formData.email} onChange={(e) => addFormData(e)} className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
+                                    <GenericInput type="email" placeholder='Email*' name="email" value={formData.email} onChange={(e) => addFormData(e)} />
                                 </div>
                                 <div className='relative'>
                                     <FaPhone className='text-white absolute start-3 top-[12px] text-[1.3rem]' />
-                                    <input type="number" name="phone" value={formData.phone} onChange={(e) => addFormData(e)} placeholder='Phone No' className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
+                                    <GenericInput type="number" placeholder='Phone No' name="phone" value={formData.phone} onChange={(e) => addFormData(e)} />
                                 </div>
                                 <div className='relative'>
                                     <MdHomeRepairService className='text-white absolute start-3 top-[10px] text-[1.5rem]' />
                                     <select className="border w-[100%]  outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b] cursor-pointer ms-auto" name="profession" defaultValue={formData.profession} onChange={(e) => {
                                         setFormData({ ...formData, [e.target.name]: e.target.value })
                                     }} >
-                                        <option value="profession" disabled>Profession</option>
+                                        <option value="profession">Profession</option>
                                         <option value="manager">Manager</option>
                                         <option value="developer">Developer</option>
                                         <option value="designer">Designer</option>
@@ -138,19 +140,20 @@ const Form = (updatedFormData : PropsInterface) => {
                             <div className='flex flex-col gap-5'>
                                 <div className='relative'>
                                     <MdOutlineLocationCity className='text-white absolute start-3 top-[9px] text-[1.5rem] ' />
-                                    <input type="text" placeholder='Building , Street*' name="building" value={formData.building} onChange={(e) => addFormData(e)} className=' pe-3 border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
+                                    <GenericInput type="text" placeholder='Building , Street*' name="building" value={formData.building} onChange={(e) => addFormData(e)} />
                                 </div>
                                 <div className='relative'>
                                     <FaAddressCard className='text-white absolute start-3 top-[9px] text-[1.5rem]' />
-                                    <input type="text" placeholder='City*' name="city" value={formData.city} onChange={(e) => addFormData(e)} className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
+                                    <GenericInput type="text" placeholder='City*' name="city" value={formData.city} onChange={(e) => addFormData(e)} />
                                 </div>
                                 <div className='relative'>
                                     <FaMapLocationDot className='text-white absolute start-3 top-[12px] text-[1.3rem]' />
-                                    <input type="text" placeholder='State*' name="state" value={formData.state} onChange={(e) => addFormData(e)} className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
+                                    <GenericInput type="text" placeholder='State*' name="state" value={formData.state} onChange={(e) => addFormData(e)} />
                                 </div>
+                                
                                 <div className='relative'>
                                     <TbMapPinCode className='text-white absolute start-3 top-[12px] text-[1.3rem]' />
-                                    <input type="number" placeholder='Pincode*' name="pincode" value={formData.pincode} onChange={(e) => addFormData(e)} className=' border w-[100%] outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b]' />
+                                    <GenericInput type="number" placeholder='Pincode*' name="pincode" value={formData.pincode} onChange={(e) => addFormData(e)} />
                                 </div>
 
                             </div>

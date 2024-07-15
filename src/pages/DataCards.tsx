@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FaTrashAlt } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { notify } from "../utils/Toast";
@@ -77,6 +77,22 @@ const DataCards = (props: PropsType) => {
 
     }
 
+    const handleNewEntry = () => {
+        const updatingData = {
+            _id: '',
+            name: '',
+            building: '',
+            profession: '',
+            city: '',
+            state: '',
+            pincode: '',
+            phone: '',
+            email: '',
+        }
+        setUpdatedFormData(updatingData);
+        navigate('/addData');
+    }
+
     useEffect(() => {
         getData('all', pageNumber);
     }, [pageNumber]);
@@ -105,7 +121,7 @@ const DataCards = (props: PropsType) => {
                         }>Delete All</button>
                     </div>
                 </div>
-                <p className=" text-violet-900 cursor-pointer me-2"><Link to={'/addData'} >Add Employee data</Link></p>
+                <p className=" text-violet-900 cursor-pointer me-2" onClick={handleNewEntry }>Add Employee data</p>
             </div>
             <div className="max-w-[1200px] mx-auto">
                 <div className=' grid grid-cols-12 bg-white py-2 border rounded-t-2xl'>
