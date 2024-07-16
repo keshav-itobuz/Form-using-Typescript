@@ -15,18 +15,20 @@ type PropsType = {
 
 const DataCards = (props: PropsType) => {
     const { setUpdatedFormData } = props
-    const [userInfo, setUserInfo] = useState<Array<FormData>>([])
+    const [employeeInfo, setEmployeeInfo] = useState<Array<FormData>>([])
     const [pageNumber, setPageNumber] = useState<number>(0)
-    const [totalPage, setTotalPage] = useState<number>(1)
+    const [pageRecord, setPageRecord] = useState<number>(10)
+    const [totalRecord, setTotalRecord] = useState<number>(1)
+    const recordsIndex = [10, 20]
     const navigate = useNavigate()
 
     const getData = async (profession: string, page: number) => {
         try {
-            const userData = await axios.get(
-                `http://localhost:4000/get-data?profession=${profession}&page=${page}`
+            const employeeData = await axios.get(
+                `http://localhost:4000/get-employee-data?profession=${profession}&page=${page}`
             )
-            setUserInfo(userData.data.data.userData)
-            setTotalPage(userData.data.data.total)
+            setEmployeeInfo(employeeData.data.data.employeeData)
+            setTotalRecord(employeeData.data.data.total)
         } catch (error) {
             console.log(error)
         }
@@ -34,11 +36,13 @@ const DataCards = (props: PropsType) => {
 
     const handleDelete = async (id: string) => {
         try {
-            await axios.delete(`http://localhost:4000/delete-data?id=${id}`)
-            const filterData = userInfo.filter((item) => {
+            await axios.delete(
+                `http://localhost:4000/delete-employee-data?id=${id}`
+            )
+            const filterData = employeeInfo.filter((item) => {
                 return item._id !== id
             })
-            setUserInfo(filterData)
+            setEmployeeInfo(filterData)
         } catch (error) {
             console.log(error)
         }
@@ -46,15 +50,15 @@ const DataCards = (props: PropsType) => {
 
     const handleDeleteAll = async () => {
         try {
-            await axios.delete(`http://localhost:4000/delete-all`)
-            setUserInfo([])
+            await axios.delete(`http://localhost:4000/delete-all-employee`)
+            setEmployeeInfo([])
         } catch (error) {
             console.log(error)
         }
     }
 
     const handleEdit = (id: string) => {
-        const filteredData = userInfo.filter((item) => {
+        const filteredData = employeeInfo.filter((item) => {
             return item._id === id
         })
         const updatingData = {
@@ -71,7 +75,6 @@ const DataCards = (props: PropsType) => {
         setUpdatedFormData(updatingData)
         navigate('/addData')
     }
-
     const handleNewEntry = () => {
         const updatingData = {
             _id: '',
@@ -87,7 +90,6 @@ const DataCards = (props: PropsType) => {
         setUpdatedFormData(updatingData)
         navigate('/addData')
     }
-
     useEffect(() => {
         getData('all', pageNumber)
     }, [pageNumber])
@@ -102,6 +104,7 @@ const DataCards = (props: PropsType) => {
                         onChange={(e) => {
                             getData(e.target.value, 0)
                             setPageNumber(0)
+                            setPageRecord(10)
                         }}
                     >
                         <option value="all">All</option>
@@ -116,7 +119,7 @@ const DataCards = (props: PropsType) => {
                             type="submit"
                             className=" text-white px-5 py-2 border-2 bg-red-700 hover:bg-red-800 rounded-md "
                             onClick={() => {
-                                if (!userInfo.length) {
+                                if (!employeeInfo.length) {
                                     notify('No data to delete')
                                     return
                                 }
@@ -141,69 +144,86 @@ const DataCards = (props: PropsType) => {
                     <span className="col-span-2">Email</span>
                     <span className="col-span-2 ">Phone No</span>
                 </div>
-                <div className=" max-h-[70vh] overflow-y-scroll no-scrollbar]">
-                    {userInfo.map((data, index) => (
-                        <div
-                            className=" grid grid-cols-12 bg-white border py-4"
-                            key={index}
-                        >
-                            <span className="col-span-2 ms-3 truncate">
-                                {data?.name[0].toLocaleUpperCase() +
-                                    data?.name.slice(1)}{' '}
-                            </span>
-                            <span className="col-span-5 pe-3">{`${data?.building} ${data?.city} ${data?.state} - ${data?.pincode}`}</span>
-                            <span className="col-span-2 truncate pe-2">
-                                {data?.email}
-                            </span>
-                            <span className="col-span-2 truncate">
-                                {!data?.phone ? '---' : data?.phone}
-                            </span>
-                            <span className="col-span-1 flex gap-8">
-                                <span
-                                    className=" cursor-pointer"
-                                    onClick={() => {
-                                        data._id && handleEdit(data._id)
-                                    }}
-                                >
-                                    <MdEdit />
+                <div className=" h-[72vh] overflow-y-scroll no-scrollbar]">
+                    {employeeInfo
+                        .filter((_value, index) => index < pageRecord)
+                        .map((data, index) => (
+                            <div
+                                className=" grid grid-cols-12 bg-white border py-4"
+                                key={index}
+                            >
+                                <span className="col-span-2 ms-3 truncate">
+                                    {data?.name[0].toLocaleUpperCase() +
+                                        data?.name.slice(1)}{' '}
                                 </span>
-                                <span
-                                    className=" cursor-pointer"
-                                    onClick={() => {
-                                        confirmAlert(() => {
-                                            data._id && handleDelete(data._id)
-                                        })
-                                    }}
-                                >
-                                    <FaTrashAlt />
+                                <span className="col-span-5 pe-3">{`${data?.building} ${data?.city} ${data?.state} - ${data?.pincode}`}</span>
+                                <span className="col-span-2 truncate pe-2">
+                                    {data?.email}
                                 </span>
-                            </span>
-                        </div>
-                    ))}
+                                <span className="col-span-2 truncate">
+                                    {!data?.phone ? '---' : data?.phone}
+                                </span>
+                                <span className="col-span-1 flex gap-8">
+                                    <span
+                                        className=" cursor-pointer"
+                                        onClick={() => {
+                                            data._id && handleEdit(data._id)
+                                        }}
+                                    >
+                                        <MdEdit />
+                                    </span>
+                                    <span
+                                        className=" cursor-pointer"
+                                        onClick={() => {
+                                            confirmAlert(() => {
+                                                data._id &&
+                                                    handleDelete(data._id)
+                                            })
+                                        }}
+                                    >
+                                        <FaTrashAlt />
+                                    </span>
+                                </span>
+                            </div>
+                        ))}
                 </div>
             </div>
-            <div className="flex justify-center mt-10 max-w-[1200px] absolute left-[45%] bottom-10  gap-5">
+            <div className="flex justify-center mx-auto  max-w-[1200px] mt-10 gap-5">
                 <button
                     type="submit"
-                    className=" bg-[#1444EF] border border-[#1444EF] text-white lg:p-3 p-[0.6rem]  hover:bg-transparent hover:text-[#1444EF] lg:rounded-md rounded-sm lg:text-normal text-[0.8rem]"
+                    className={`text-[1.5rem] ${pageNumber > 0 ? 'text-black' : 'text-gray-400'}`}
                     onClick={() => {
-                        pageNumber > 0
-                            ? setPageNumber(pageNumber - 1)
-                            : notify('You are on first Page')
+                        pageNumber > 0 && setPageNumber(pageNumber - 1)
                     }}
                 >
                     <FaCaretLeft />
                 </button>
-                <span className=" text-[1.1rem] mt-1 w-[10px]">
-                    {pageNumber + 1}
-                </span>
+                <select
+                    name="page"
+                    id="page"
+                    className=" border outline-none py-1 rounded-md px-2 cursor-pointer "
+                    onChange={(e) => {
+                        setPageRecord(Number(e.target.value))
+                    }}
+                >
+                    {recordsIndex.map((value) => {
+                        return (
+                            pageNumber * 20 + value <= totalRecord && (
+                                <option value={value}> {value}</option>
+                            )
+                        )
+                    })}
+                </select>
+                <p className="mt-[0.2rem]">
+                    Record {pageNumber * 20 + 1}-{pageNumber * 20 + pageRecord}{' '}
+                    of {totalRecord}
+                </p>
                 <button
                     type="submit"
-                    className=" bg-[#1444EF] border border-[#1444EF] text-white lg:p-3 p-[0.6rem]  hover:bg-transparent hover:text-[#1444EF] lg:rounded-md rounded-sm lg:text-normal text-[0.8rem] pt-2"
+                    className={`text-[1.5rem] ${pageNumber < Math.ceil(totalRecord / 20) - 1 ? 'text-black' : 'text-gray-400'}`}
                     onClick={() => {
-                        pageNumber < totalPage - 1
-                            ? setPageNumber(pageNumber + 1)
-                            : notify('You are on last Page')
+                        pageNumber < Math.ceil(totalRecord / 20) - 1 &&
+                            setPageNumber(pageNumber + 1)
                     }}
                 >
                     <FaCaretRight />
