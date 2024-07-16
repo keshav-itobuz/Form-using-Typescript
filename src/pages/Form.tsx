@@ -45,7 +45,7 @@ const Form = (updatedFormData: PropsInterface) => {
                 notify('Fill all the fields')
                 return
             }
-            await axios.post('http://localhost:4000/save-employee-data', {
+            await axios.post('http://localhost:4000/send-employee', {
                 formData,
             })
             formRef.current && formRef.current.reset()
@@ -73,7 +73,7 @@ const Form = (updatedFormData: PropsInterface) => {
                 notify('Invalid email')
                 return
             }
-            await axios.put('http://localhost:4000/update-employee-data', {
+            await axios.put('http://localhost:4000/update-employee', {
                 formData,
             })
             navigate('/')

@@ -17,15 +17,16 @@ const DataCards = (props: PropsType) => {
     const { setUpdatedFormData } = props
     const [employeeInfo, setEmployeeInfo] = useState<Array<FormData>>([])
     const [pageNumber, setPageNumber] = useState<number>(0)
-    const [pageRecord, setPageRecord] = useState<number>(10)
+    const [lastRecord, setLastRecord] = useState<number>(10)
+    const [profession, setProfession] = useState<string>('all')
     const [totalRecord, setTotalRecord] = useState<number>(1)
-    const recordsIndex = [10, 20]
+    const recordsIndex = [10, 20, 30, 40, 50]
     const navigate = useNavigate()
 
-    const getData = async (profession: string, page: number) => {
+    const getData = async (profession: string, page: number, limit: number) => {
         try {
             const employeeData = await axios.get(
-                `http://localhost:4000/get-employee-data?profession=${profession}&page=${page}`
+                `http://localhost:4000/get-employee?profession=${profession}&page=${page}&limit=${limit}`
             )
             setEmployeeInfo(employeeData.data.data.employeeData)
             setTotalRecord(employeeData.data.data.total)
@@ -36,9 +37,7 @@ const DataCards = (props: PropsType) => {
 
     const handleDelete = async (id: string) => {
         try {
-            await axios.delete(
-                `http://localhost:4000/delete-employee-data?id=${id}`
-            )
+            await axios.delete(`http://localhost:4000/delete-employee?id=${id}`)
             const filterData = employeeInfo.filter((item) => {
                 return item._id !== id
             })
@@ -90,8 +89,14 @@ const DataCards = (props: PropsType) => {
         setUpdatedFormData(updatingData)
         navigate('/addData')
     }
+    const handlePagination = (pageRecord: string) => {
+        getData(profession, 0, Number(pageRecord))
+        setLastRecord(Number(pageRecord))
+        setPageNumber(0)
+    }
+
     useEffect(() => {
-        getData('all', pageNumber)
+        getData(profession, pageNumber, 10)
     }, [pageNumber])
 
     return (
@@ -102,9 +107,9 @@ const DataCards = (props: PropsType) => {
                         className="border outline-none py-2 rounded-md px-3 cursor-pointer"
                         name="profession"
                         onChange={(e) => {
-                            getData(e.target.value, 0)
+                            setProfession(e.target.value)
                             setPageNumber(0)
-                            setPageRecord(10)
+                            getData(e.target.value, 0, lastRecord)
                         }}
                     >
                         <option value="all">All</option>
@@ -145,47 +150,44 @@ const DataCards = (props: PropsType) => {
                     <span className="col-span-2 ">Phone No</span>
                 </div>
                 <div className=" h-[72vh] overflow-y-scroll no-scrollbar]">
-                    {employeeInfo
-                        .filter((_value, index) => index < pageRecord)
-                        .map((data, index) => (
-                            <div
-                                className=" grid grid-cols-12 bg-white border py-4"
-                                key={index}
-                            >
-                                <span className="col-span-2 ms-3 truncate">
-                                    {data?.name[0].toLocaleUpperCase() +
-                                        data?.name.slice(1)}{' '}
+                    {employeeInfo.map((data, index) => (
+                        <div
+                            className=" grid grid-cols-12 bg-white border py-4"
+                            key={index}
+                        >
+                            <span className="col-span-2 ms-3 truncate">
+                                {data?.name[0].toLocaleUpperCase() +
+                                    data?.name.slice(1)}{' '}
+                            </span>
+                            <span className="col-span-5 pe-3">{`${data?.building} ${data?.city} ${data?.state} - ${data?.pincode}`}</span>
+                            <span className="col-span-2 truncate pe-2">
+                                {data?.email}
+                            </span>
+                            <span className="col-span-2 truncate">
+                                {!data?.phone ? '---' : data?.phone}
+                            </span>
+                            <span className="col-span-1 flex gap-8">
+                                <span
+                                    className=" cursor-pointer"
+                                    onClick={() => {
+                                        data._id && handleEdit(data._id)
+                                    }}
+                                >
+                                    <MdEdit />
                                 </span>
-                                <span className="col-span-5 pe-3">{`${data?.building} ${data?.city} ${data?.state} - ${data?.pincode}`}</span>
-                                <span className="col-span-2 truncate pe-2">
-                                    {data?.email}
+                                <span
+                                    className=" cursor-pointer"
+                                    onClick={() => {
+                                        confirmAlert(() => {
+                                            data._id && handleDelete(data._id)
+                                        })
+                                    }}
+                                >
+                                    <FaTrashAlt />
                                 </span>
-                                <span className="col-span-2 truncate">
-                                    {!data?.phone ? '---' : data?.phone}
-                                </span>
-                                <span className="col-span-1 flex gap-8">
-                                    <span
-                                        className=" cursor-pointer"
-                                        onClick={() => {
-                                            data._id && handleEdit(data._id)
-                                        }}
-                                    >
-                                        <MdEdit />
-                                    </span>
-                                    <span
-                                        className=" cursor-pointer"
-                                        onClick={() => {
-                                            confirmAlert(() => {
-                                                data._id &&
-                                                    handleDelete(data._id)
-                                            })
-                                        }}
-                                    >
-                                        <FaTrashAlt />
-                                    </span>
-                                </span>
-                            </div>
-                        ))}
+                            </span>
+                        </div>
+                    ))}
                 </div>
             </div>
             <div className="flex justify-center mx-auto  max-w-[1200px] mt-10 gap-5">
@@ -194,6 +196,8 @@ const DataCards = (props: PropsType) => {
                     className={`text-[1.5rem] ${pageNumber > 0 ? 'text-black' : 'text-gray-400'}`}
                     onClick={() => {
                         pageNumber > 0 && setPageNumber(pageNumber - 1)
+                        pageNumber > 0 &&
+                            setLastRecord((pageNumber + 1) * 10 - 10)
                     }}
                 >
                     <FaCaretLeft />
@@ -203,27 +207,26 @@ const DataCards = (props: PropsType) => {
                     id="page"
                     className=" border outline-none py-1 rounded-md px-2 cursor-pointer "
                     onChange={(e) => {
-                        setPageRecord(Number(e.target.value))
+                        handlePagination(e.target.value)
                     }}
                 >
                     {recordsIndex.map((value) => {
-                        return (
-                            pageNumber * 20 + value <= totalRecord && (
-                                <option value={value}> {value}</option>
-                            )
-                        )
+                        return <option value={value}> {value}</option>
                     })}
                 </select>
                 <p className="mt-[0.2rem]">
-                    Record {pageNumber * 20 + 1}-{pageNumber * 20 + pageRecord}{' '}
-                    of {totalRecord}
+                    Record {pageNumber * 10 + 1}-
+                    {lastRecord < totalRecord ? lastRecord : totalRecord} of{' '}
+                    {totalRecord}
                 </p>
                 <button
                     type="submit"
-                    className={`text-[1.5rem] ${pageNumber < Math.ceil(totalRecord / 20) - 1 ? 'text-black' : 'text-gray-400'}`}
+                    className={`text-[1.5rem] ${lastRecord < totalRecord ? 'text-black' : 'text-gray-400'}`}
                     onClick={() => {
-                        pageNumber < Math.ceil(totalRecord / 20) - 1 &&
+                        lastRecord < totalRecord &&
                             setPageNumber(pageNumber + 1)
+                        lastRecord < totalRecord &&
+                            setLastRecord((pageNumber + 1) * 10 + 10)
                     }}
                 >
                     <FaCaretRight />
