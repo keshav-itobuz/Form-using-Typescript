@@ -110,7 +110,7 @@ const DataCards = (props: PropsType) => {
                         onChange={(e) => {
                             setProfession(e.target.value)
                             setPageNumber(0)
-                            getData(profession, pageNumber, lastRecord)
+                            getData(e.target.value, 0, lastRecord)
                         }}
                     >
                         <option value="all">All</option>
