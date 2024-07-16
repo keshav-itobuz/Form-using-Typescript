@@ -23,6 +23,7 @@ const Form = (updatedFormData: PropsInterface) => {
         name: updatedFormData.updatedFormData.name,
         profession: updatedFormData.updatedFormData.profession,
         building: updatedFormData.updatedFormData.building,
+        phone: updatedFormData.updatedFormData.phone,
         city: updatedFormData.updatedFormData.city,
         state: updatedFormData.updatedFormData.state,
         pincode: updatedFormData.updatedFormData.pincode,
@@ -40,7 +41,7 @@ const Form = (updatedFormData: PropsInterface) => {
                 notify('Fill all the fields')
                 return;
             }
-            await axios.post('http://localhost:4000/saveData', {
+            await axios.post('http://localhost:4000/save-data', {
                 formData
             })
             formRef.current && formRef.current.reset();
@@ -60,10 +61,10 @@ const Form = (updatedFormData: PropsInterface) => {
                 return;
             }
             if (!formData.email.match(emailRegex)) {
-                alert('Invalid email')
+                notify('Invalid email')
                 return;
             }
-            await axios.put('http://localhost:4000/updateData', {
+            await axios.put('http://localhost:4000/update-data', {
                 formData
             })
             navigate("/");
@@ -82,7 +83,7 @@ const Form = (updatedFormData: PropsInterface) => {
             return;
         }
         if (!formData.email.match(emailRegex)) {
-            alert('Invalid email')
+            notify('Invalid email')
             return;
         }
         formRef.current && formRef.current.reset();
@@ -92,7 +93,6 @@ const Form = (updatedFormData: PropsInterface) => {
     const addFormData = (event: ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [event.target.name]: event.target.value })
     }
-
     return (
         <div className='min-h-[100vh] flex items-center  bg-cover bg-no-repeat' id="form" >
             <div className='w-[100%] mx-1'>
@@ -122,7 +122,7 @@ const Form = (updatedFormData: PropsInterface) => {
                                     <select className="border w-[100%]  outline-none pb-3 pt-2 rounded-full ps-12 bg-[#C3D5E5] text-[#3d176b] cursor-pointer ms-auto" name="profession" defaultValue={formData.profession} onChange={(e) => {
                                         setFormData({ ...formData, [e.target.name]: e.target.value })
                                     }} >
-                                        <option value="profession">Profession</option>
+                                        <option value="profession" hidden>Profession</option>
                                         <option value="manager">Manager</option>
                                         <option value="developer">Developer</option>
                                         <option value="designer">Designer</option>
@@ -150,7 +150,7 @@ const Form = (updatedFormData: PropsInterface) => {
                                     <FaMapLocationDot className='text-white absolute start-3 top-[12px] text-[1.3rem]' />
                                     <GenericInput type="text" placeholder='State*' name="state" value={formData.state} onChange={(e) => addFormData(e)} />
                                 </div>
-                                
+
                                 <div className='relative'>
                                     <TbMapPinCode className='text-white absolute start-3 top-[12px] text-[1.3rem]' />
                                     <GenericInput type="number" placeholder='Pincode*' name="pincode" value={formData.pincode} onChange={(e) => addFormData(e)} />

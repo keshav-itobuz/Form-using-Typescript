@@ -25,7 +25,7 @@ const DataCards = (props: PropsType) => {
 
     const getData = async (profession: string, page: number) => {
         try {
-            const userData = await axios.get(`http://localhost:4000/getData?profession=${profession}&page=${page}`)
+            const userData = await axios.get(`http://localhost:4000/get-data?profession=${profession}&page=${page}`)
             setUserInfo(userData.data.data.userData);
             setTotalPage(userData.data.data.total);
         }
@@ -36,7 +36,7 @@ const DataCards = (props: PropsType) => {
 
     const handleDelete = async (id: string) => {
         try {
-            await axios.delete(`http://localhost:4000/deleteData?id=${id}`);
+            await axios.delete(`http://localhost:4000/delete-data?id=${id}`);
             const filterData = userInfo.filter((item) => {
                 return item._id !== id
             })
@@ -49,7 +49,7 @@ const DataCards = (props: PropsType) => {
 
     const handleDeleteAll = async () => {
         try {
-            await axios.delete(`http://localhost:4000/deleteAll`);
+            await axios.delete(`http://localhost:4000/delete-all`);
             setUserInfo([]);
         }
         catch (error) {
