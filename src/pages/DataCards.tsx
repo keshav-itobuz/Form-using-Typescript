@@ -96,8 +96,9 @@ const DataCards = (props: PropsType) => {
     }
 
     useEffect(() => {
-        getData(profession, pageNumber, lastRecord)
-    }, [pageNumber,profession,lastRecord])
+        getData(profession, pageNumber, 10)
+    }, [pageNumber])
+    
 
     return (
         <div className="bg-[#0597ff22] min-h-[100vh] pb-10 px-2">
@@ -109,6 +110,7 @@ const DataCards = (props: PropsType) => {
                         onChange={(e) => {
                             setProfession(e.target.value)
                             setPageNumber(0)
+                            getData(profession, pageNumber, lastRecord)
                         }}
                     >
                         <option value="all">All</option>
