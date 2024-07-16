@@ -1,21 +1,21 @@
-import Swal from "sweetalert2";
-export const confirmAlert = <T>(handleFunction:()=>T) =>{
+import Swal from 'sweetalert2'
+export const confirmAlert = <T>(handleFunction: () => T) => {
     Swal.fire({
-        title: "Are you sure?",
+        title: 'Are you sure?',
         text: "You won't be able to revert this!",
-        icon: "warning",
+        icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!"
-      }).then((result) => {
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
         if (result.isConfirmed) {
-          handleFunction()
-          Swal.fire({
-            title: "Deleted!",
-            text: "Your file has been deleted.",
-            icon: "success"
-          });
+            handleFunction()
+            Swal.fire({
+                title: 'Deleted!',
+                text: 'Your file has been deleted.',
+                icon: 'success',
+            })
         }
-      });
+    })
 }
