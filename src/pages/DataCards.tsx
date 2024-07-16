@@ -96,8 +96,8 @@ const DataCards = (props: PropsType) => {
     }
 
     useEffect(() => {
-        getData(profession, pageNumber, 10)
-    }, [pageNumber])
+        getData(profession, pageNumber, lastRecord)
+    }, [pageNumber,profession,lastRecord])
 
     return (
         <div className="bg-[#0597ff22] min-h-[100vh] pb-10 px-2">
@@ -109,7 +109,6 @@ const DataCards = (props: PropsType) => {
                         onChange={(e) => {
                             setProfession(e.target.value)
                             setPageNumber(0)
-                            getData(e.target.value, 0, lastRecord)
                         }}
                     >
                         <option value="all">All</option>
@@ -195,9 +194,10 @@ const DataCards = (props: PropsType) => {
                     type="submit"
                     className={`text-[1.5rem] ${pageNumber > 0 ? 'text-black' : 'text-gray-400'}`}
                     onClick={() => {
-                        pageNumber > 0 && setPageNumber(pageNumber - 1)
-                        pageNumber > 0 &&
+                        if (pageNumber > 0) {
+                            setPageNumber(pageNumber - 1)
                             setLastRecord((pageNumber + 1) * 10 - 10)
+                        }
                     }}
                 >
                     <FaCaretLeft />
@@ -223,10 +223,10 @@ const DataCards = (props: PropsType) => {
                     type="submit"
                     className={`text-[1.5rem] ${lastRecord < totalRecord ? 'text-black' : 'text-gray-400'}`}
                     onClick={() => {
-                        lastRecord < totalRecord &&
+                        if (lastRecord < totalRecord) {
                             setPageNumber(pageNumber + 1)
-                        lastRecord < totalRecord &&
                             setLastRecord((pageNumber + 1) * 10 + 10)
+                        }
                     }}
                 >
                     <FaCaretRight />
