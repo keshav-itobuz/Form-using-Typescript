@@ -98,7 +98,6 @@ const DataCards = (props: PropsType) => {
     useEffect(() => {
         getData(profession, pageNumber, 10)
     }, [pageNumber])
-    
 
     return (
         <div className="bg-[#0597ff22] min-h-[100vh] pb-10 px-2">
@@ -213,7 +212,12 @@ const DataCards = (props: PropsType) => {
                     }}
                 >
                     {recordsIndex.map((value) => {
-                        return <option value={value} key={value}> {value}</option>
+                        return (
+                            <option value={value} key={value}>
+                                {' '}
+                                {value}
+                            </option>
+                        )
                     })}
                 </select>
                 <p className="mt-[0.2rem]">

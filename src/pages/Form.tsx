@@ -19,6 +19,7 @@ interface PropsInterface {
 
 const Form = (updatedFormData: PropsInterface) => {
     const [formData, setFormData] = useState<FormData>({
+        _id: updatedFormData.updatedFormData._id,
         name: updatedFormData.updatedFormData.name,
         profession: updatedFormData.updatedFormData.profession,
         building: updatedFormData.updatedFormData.building,
@@ -73,6 +74,7 @@ const Form = (updatedFormData: PropsInterface) => {
                 notify('Invalid email')
                 return
             }
+            console.log(formData)
             await axios.put('http://localhost:4000/update-employee', {
                 formData,
             })
@@ -85,7 +87,11 @@ const Form = (updatedFormData: PropsInterface) => {
 
     const handleNext = (e: FormEvent<HTMLButtonElement>) => {
         e.preventDefault()
-        if (!formData.name || !formData.email || formData.profession==='profession') {
+        if (
+            !formData.name ||
+            !formData.email ||
+            formData.profession === 'profession'
+        ) {
             notify('Fill all the fields')
             return
         }
