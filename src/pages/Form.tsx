@@ -9,9 +9,11 @@ import { FaMapLocationDot } from 'react-icons/fa6'
 import { useNavigate } from 'react-router-dom'
 import { useState, FormEvent, useRef, ChangeEvent } from 'react'
 import { MdHomeRepairService } from 'react-icons/md'
-import { FormData } from '../utils/interface'
+import { FormData } from '../interface/interface'
 import { notify, notifySuccess } from '../utils/Toast'
-import GenericInput from '../components/GenericInput'
+import GenericInput from '../components/formComponent/GenericInput'
+import customAxios from '../utils/customAxios'
+import { addressValidator, employeeDetailsValidator } from '../utils/validator'
 
 interface PropsInterface {
     updatedFormData: FormData
@@ -19,7 +21,7 @@ interface PropsInterface {
 
 const Form = (updatedFormData: PropsInterface) => {
     const [formData, setFormData] = useState<FormData>({
-        _id: updatedFormData.updatedFormData._id,
+        id: updatedFormData.updatedFormData.id,
         name: updatedFormData.updatedFormData.name,
         profession: updatedFormData.updatedFormData.profession,
         building: updatedFormData.updatedFormData.building,
@@ -31,25 +33,17 @@ const Form = (updatedFormData: PropsInterface) => {
     })
     const [showOtherSection, setShowOtherSection] = useState<boolean>(false)
     const formRef = useRef<HTMLFormElement>(null)
-    const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/
     const navigate = useNavigate()
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         try {
-            if (
-                !formData.building ||
-                !formData.state ||
-                !formData.city ||
-                !formData.pincode
-            ) {
-                notify('Fill all the fields')
-                return
-            }
-            await axios.post('http://localhost:4000/send-employee', {
+            const validate = addressValidator(formData);
+            if (!validate) return
+            await customAxios.post('send-employee', {
                 formData,
             })
-            formRef.current && formRef.current.reset()
+
             setShowOtherSection(false)
             navigate('/')
             notifySuccess('Successfully added the data')
@@ -60,46 +54,25 @@ const Form = (updatedFormData: PropsInterface) => {
 
     const handleUpdate = async () => {
         try {
-            if (
-                !formData.building ||
-                !formData.state ||
-                !formData.city ||
-                !formData.pincode ||
-                !formData.profession
-            ) {
-                notify('Fill all the fields')
-                return
-            }
-            if (!formData.email.match(emailRegex)) {
-                notify('Invalid email')
-                return
-            }
-            console.log(formData)
-            await axios.put('http://localhost:4000/update-employee', {
+            const validate = addressValidator(formData);
+            if (!validate) return
+            await customAxios.put('update-employee', {
                 formData,
             })
             navigate('/')
             notifySuccess('sucessfully updated')
         } catch (error) {
             console.log(error)
+            if (axios.isAxiosError(error)) {
+                notify(error.response?.data.message)
+            }
         }
     }
 
     const handleNext = (e: FormEvent<HTMLButtonElement>) => {
         e.preventDefault()
-        if (
-            !formData.name ||
-            !formData.email ||
-            formData.profession === 'profession'
-        ) {
-            notify('Fill all the fields')
-            return
-        }
-        if (!formData.email.match(emailRegex)) {
-            notify('Invalid email')
-            return
-        }
-        formRef.current && formRef.current.reset()
+        const validate = employeeDetailsValidator(formData)
+        if (!validate) return
         setShowOtherSection(true)
     }
 
@@ -248,7 +221,7 @@ const Form = (updatedFormData: PropsInterface) => {
                                     />
                                 </div>
                             </div>
-                            {updatedFormData.updatedFormData._id ? (
+                            {updatedFormData.updatedFormData.id ? (
                                 <div className="flex justify-center my-5">
                                     <button
                                         type="button"

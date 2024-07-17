@@ -1,13 +1,15 @@
-import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FaTrashAlt } from 'react-icons/fa'
 import { MdEdit } from 'react-icons/md'
 import { notify } from '../utils/Toast'
-import { FormData } from '../utils/interface'
+import { FormData } from '../interface/interface'
 import { confirmAlert } from '../utils/confirmAlert'
 import { FaCaretRight } from 'react-icons/fa'
 import { FaCaretLeft } from 'react-icons/fa'
+import customAxios from '../utils/customAxios'
+import GenericSelect from '../components/formComponent/GenericSelect'
+import { Profession } from '../enum/enum'
 
 type PropsType = {
     setUpdatedFormData: React.Dispatch<React.SetStateAction<FormData>>
@@ -21,12 +23,13 @@ const DataCards = (props: PropsType) => {
     const [profession, setProfession] = useState<string>('all')
     const [totalRecord, setTotalRecord] = useState<number>(1)
     const recordsIndex = [10, 20, 30, 40, 50]
+    const ProfessionOption = ['all', 'manager', 'developer', 'designer', 'marketing', 'hr'];
     const navigate = useNavigate()
 
     const getData = async (profession: string, page: number, limit: number) => {
         try {
-            const employeeData = await axios.get(
-                `http://localhost:4000/get-employee?profession=${profession}&page=${page}&limit=${limit}`
+            const employeeData = await customAxios.get(
+                `get-employee?profession=${profession}&page=${page}&limit=${limit}`
             )
             setEmployeeInfo(employeeData.data.data.employeeData)
             setTotalRecord(employeeData.data.data.total)
@@ -37,9 +40,9 @@ const DataCards = (props: PropsType) => {
 
     const handleDelete = async (id: string) => {
         try {
-            await axios.delete(`http://localhost:4000/delete-employee?id=${id}`)
+            await customAxios.delete(`delete-employee?id=${id}`)
             const filterData = employeeInfo.filter((item) => {
-                return item._id !== id
+                return item.id !== id
             })
             setEmployeeInfo(filterData)
         } catch (error) {
@@ -49,7 +52,7 @@ const DataCards = (props: PropsType) => {
 
     const handleDeleteAll = async () => {
         try {
-            await axios.delete(`http://localhost:4000/delete-all-employee`)
+            await customAxios.delete(`delete-all-employee`)
             setEmployeeInfo([])
         } catch (error) {
             console.log(error)
@@ -58,10 +61,10 @@ const DataCards = (props: PropsType) => {
 
     const handleEdit = (id: string) => {
         const filteredData = employeeInfo.filter((item) => {
-            return item._id === id
+            return item.id === id
         })
         const updatingData = {
-            _id: filteredData[0]._id,
+            _id: filteredData[0].id,
             name: filteredData[0].name,
             building: filteredData[0].building,
             profession: filteredData[0].profession,
@@ -74,12 +77,13 @@ const DataCards = (props: PropsType) => {
         setUpdatedFormData(updatingData)
         navigate('/addData')
     }
+
     const handleNewEntry = () => {
         const updatingData = {
             _id: '',
             name: '',
             building: '',
-            profession: 'profession',
+            profession: Profession.PROFESSION,
             city: '',
             state: '',
             pincode: '',
@@ -89,6 +93,7 @@ const DataCards = (props: PropsType) => {
         setUpdatedFormData(updatingData)
         navigate('/addData')
     }
+
     const handlePagination = (pageRecord: string) => {
         getData(profession, 0, Number(pageRecord))
         setLastRecord(Number(pageRecord))
@@ -103,22 +108,16 @@ const DataCards = (props: PropsType) => {
         <div className="bg-[#0597ff22] min-h-[100vh] pb-10 px-2">
             <div className="flex max-w-[1200px] justify-between mx-auto py-6">
                 <div className="flex gap-1">
-                    <select
-                        className="border outline-none py-2 rounded-md px-3 cursor-pointer"
-                        name="profession"
-                        onChange={(e) => {
+                    <GenericSelect
+                        handleChange={(e) => {
                             setProfession(e.target.value)
                             setPageNumber(0)
                             getData(e.target.value, 0, lastRecord)
                         }}
-                    >
-                        <option value="all">All</option>
-                        <option value="manager">Manager</option>
-                        <option value="developer">Developer</option>
-                        <option value="designer">Designer</option>
-                        <option value="marketing">Marketing</option>
-                        <option value="hr">Hr</option>
-                    </select>
+                        optionValues={ProfessionOption}
+                        name="profession"
+                    />
+                   
                     <div className="flex justify-center">
                         <button
                             type="submit"
@@ -170,7 +169,7 @@ const DataCards = (props: PropsType) => {
                                 <span
                                     className=" cursor-pointer"
                                     onClick={() => {
-                                        data._id && handleEdit(data._id)
+                                        data.id && handleEdit(data.id)
                                     }}
                                 >
                                     <MdEdit />
@@ -179,7 +178,7 @@ const DataCards = (props: PropsType) => {
                                     className=" cursor-pointer"
                                     onClick={() => {
                                         confirmAlert(() => {
-                                            data._id && handleDelete(data._id)
+                                            data.id && handleDelete(data.id)
                                         })
                                     }}
                                 >
@@ -203,23 +202,11 @@ const DataCards = (props: PropsType) => {
                 >
                     <FaCaretLeft />
                 </button>
-                <select
+                <GenericSelect
+                    handleChange={(e) => { handlePagination(e.target.value) }}
+                    optionValues={recordsIndex}
                     name="page"
-                    id="page"
-                    className=" border outline-none py-1 rounded-md px-2 cursor-pointer "
-                    onChange={(e) => {
-                        handlePagination(e.target.value)
-                    }}
-                >
-                    {recordsIndex.map((value) => {
-                        return (
-                            <option value={value} key={value}>
-                                {' '}
-                                {value}
-                            </option>
-                        )
-                    })}
-                </select>
+                />
                 <p className="mt-[0.2rem]">
                     Record {pageNumber * 10 + 1}-
                     {lastRecord < totalRecord ? lastRecord : totalRecord} of{' '}
