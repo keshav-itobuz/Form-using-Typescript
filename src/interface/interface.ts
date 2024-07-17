@@ -1,7 +1,7 @@
-import { Profession } from "../enum/enum"
+import { Profession } from '../enum/enum'
 
 export interface FormData {
-    id?: string
+    _id?: string
     name: string
     profession: Profession
     building: string

@@ -23,7 +23,14 @@ const DataCards = (props: PropsType) => {
     const [profession, setProfession] = useState<string>('all')
     const [totalRecord, setTotalRecord] = useState<number>(1)
     const recordsIndex = [10, 20, 30, 40, 50]
-    const ProfessionOption = ['all', 'manager', 'developer', 'designer', 'marketing', 'hr'];
+    const ProfessionOption = [
+        'all',
+        'manager',
+        'developer',
+        'designer',
+        'marketing',
+        'hr',
+    ]
     const navigate = useNavigate()
 
     const getData = async (profession: string, page: number, limit: number) => {
@@ -42,7 +49,7 @@ const DataCards = (props: PropsType) => {
         try {
             await customAxios.delete(`delete-employee?id=${id}`)
             const filterData = employeeInfo.filter((item) => {
-                return item.id !== id
+                return item._id !== id
             })
             setEmployeeInfo(filterData)
         } catch (error) {
@@ -61,10 +68,10 @@ const DataCards = (props: PropsType) => {
 
     const handleEdit = (id: string) => {
         const filteredData = employeeInfo.filter((item) => {
-            return item.id === id
+            return item._id === id
         })
         const updatingData = {
-            _id: filteredData[0].id,
+            _id: filteredData[0]._id,
             name: filteredData[0].name,
             building: filteredData[0].building,
             profession: filteredData[0].profession,
@@ -117,7 +124,7 @@ const DataCards = (props: PropsType) => {
                         optionValues={ProfessionOption}
                         name="profession"
                     />
-                   
+
                     <div className="flex justify-center">
                         <button
                             type="submit"
@@ -169,7 +176,7 @@ const DataCards = (props: PropsType) => {
                                 <span
                                     className=" cursor-pointer"
                                     onClick={() => {
-                                        data.id && handleEdit(data.id)
+                                        data._id && handleEdit(data._id)
                                     }}
                                 >
                                     <MdEdit />
@@ -178,7 +185,7 @@ const DataCards = (props: PropsType) => {
                                     className=" cursor-pointer"
                                     onClick={() => {
                                         confirmAlert(() => {
-                                            data.id && handleDelete(data.id)
+                                            data._id && handleDelete(data._id)
                                         })
                                     }}
                                 >
@@ -203,7 +210,9 @@ const DataCards = (props: PropsType) => {
                     <FaCaretLeft />
                 </button>
                 <GenericSelect
-                    handleChange={(e) => { handlePagination(e.target.value) }}
+                    handleChange={(e) => {
+                        handlePagination(e.target.value)
+                    }}
                     optionValues={recordsIndex}
                     name="page"
                 />

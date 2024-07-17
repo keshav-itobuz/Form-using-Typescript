@@ -21,7 +21,7 @@ interface PropsInterface {
 
 const Form = (updatedFormData: PropsInterface) => {
     const [formData, setFormData] = useState<FormData>({
-        id: updatedFormData.updatedFormData.id,
+        _id: updatedFormData.updatedFormData._id,
         name: updatedFormData.updatedFormData.name,
         profession: updatedFormData.updatedFormData.profession,
         building: updatedFormData.updatedFormData.building,
@@ -38,7 +38,7 @@ const Form = (updatedFormData: PropsInterface) => {
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         try {
-            const validate = addressValidator(formData);
+            const validate = addressValidator(formData)
             if (!validate) return
             await customAxios.post('send-employee', {
                 formData,
@@ -54,7 +54,7 @@ const Form = (updatedFormData: PropsInterface) => {
 
     const handleUpdate = async () => {
         try {
-            const validate = addressValidator(formData);
+            const validate = addressValidator(formData)
             if (!validate) return
             await customAxios.put('update-employee', {
                 formData,
@@ -221,7 +221,7 @@ const Form = (updatedFormData: PropsInterface) => {
                                     />
                                 </div>
                             </div>
-                            {updatedFormData.updatedFormData.id ? (
+                            {updatedFormData.updatedFormData._id ? (
                                 <div className="flex justify-center my-5">
                                     <button
                                         type="button"

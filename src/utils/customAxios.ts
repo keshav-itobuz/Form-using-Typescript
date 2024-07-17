@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from 'axios'
 
 const customAxios = axios.create({
     baseURL: 'http://localhost:4000/',
@@ -8,7 +8,6 @@ const customAxios = axios.create({
         'x-rapidapi-host': 'famous-quotes4.p.rapidapi.com',
         'x-rapidapi-key': '<your-key-here>',
     },
-});
+})
 
 export default customAxios
-

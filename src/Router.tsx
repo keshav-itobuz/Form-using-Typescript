@@ -7,10 +7,9 @@ import 'react-toastify/dist/ReactToastify.css'
 import { useState } from 'react'
 import { Profession } from './enum/enum.ts'
 
-
 function Router() {
     const [updatedFormData, setUpdatedFormData] = useState<FormData>({
-        id: '',
+        _id: '',
         name: '',
         profession: Profession.PROFESSION,
         building: '',
