@@ -79,7 +79,7 @@ const DataCards = (props: PropsType) => {
             _id: '',
             name: '',
             building: '',
-            profession: '',
+            profession: 'profession',
             city: '',
             state: '',
             pincode: '',
@@ -213,7 +213,7 @@ const DataCards = (props: PropsType) => {
                     }}
                 >
                     {recordsIndex.map((value) => {
-                        return <option value={value}> {value}</option>
+                        return <option value={value} key={value}> {value}</option>
                     })}
                 </select>
                 <p className="mt-[0.2rem]">

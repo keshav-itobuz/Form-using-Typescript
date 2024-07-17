@@ -85,7 +85,7 @@ const Form = (updatedFormData: PropsInterface) => {
 
     const handleNext = (e: FormEvent<HTMLButtonElement>) => {
         e.preventDefault()
-        if (!formData.name || !formData.email || !formData.profession) {
+        if (!formData.name || !formData.email || formData.profession==='profession') {
             notify('Fill all the fields')
             return
         }
