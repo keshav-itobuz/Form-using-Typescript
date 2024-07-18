@@ -13,50 +13,34 @@ import { FormData } from '../interface/interface'
 import { notify, notifySuccess } from '../utils/Toast'
 import GenericInput from '../components/formComponent/GenericInput'
 import customAxios from '../utils/customAxios'
-import { addressValidator, employeeDetailsValidator } from '../utils/validator'
+import { addressValidator, employeeDetailsValidator } from '../validators/validator'
 
 interface PropsInterface {
     updatedFormData: FormData
 }
 
-const Form = (updatedFormData: PropsInterface) => {
+const Form = (props: PropsInterface) => {
     const [formData, setFormData] = useState<FormData>({
-        _id: updatedFormData.updatedFormData._id,
-        name: updatedFormData.updatedFormData.name,
-        profession: updatedFormData.updatedFormData.profession,
-        building: updatedFormData.updatedFormData.building,
-        phone: updatedFormData.updatedFormData.phone,
-        city: updatedFormData.updatedFormData.city,
-        state: updatedFormData.updatedFormData.state,
-        pincode: updatedFormData.updatedFormData.pincode,
-        email: updatedFormData.updatedFormData.email,
+        _id: props.updatedFormData._id,
+        name: props.updatedFormData.name,
+        profession: props.updatedFormData.profession,
+        building: props.updatedFormData.building,
+        phone: props.updatedFormData.phone,
+        city: props.updatedFormData.city,
+        state: props.updatedFormData.state,
+        pincode: props.updatedFormData.pincode,
+        email: props.updatedFormData.email,
     })
     const [showOtherSection, setShowOtherSection] = useState<boolean>(false)
     const formRef = useRef<HTMLFormElement>(null)
     const navigate = useNavigate()
 
-    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
+    const handleSaveUpdate = async () => {
         try {
             const validate = addressValidator(formData)
             if (!validate) return
-            await customAxios.post('send-employee', {
-                formData,
-            })
-
-            setShowOtherSection(false)
-            navigate('/')
-            notifySuccess('Successfully added the data')
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    const handleUpdate = async () => {
-        try {
-            const validate = addressValidator(formData)
-            if (!validate) return
-            await customAxios.put('update-employee', {
+            console.log(formData)
+            await customAxios.post('create-update-employee', {
                 formData,
             })
             navigate('/')
@@ -96,7 +80,6 @@ const Form = (updatedFormData: PropsInterface) => {
                 </div>
                 <form
                     className="w-[100%] max-w-[450px] min-h-fit flex flex-col gap-5 mx-auto bg-white px-8 sm:px-16"
-                    onSubmit={handleSubmit}
                     id="formData"
                     ref={formRef}
                 >
@@ -221,26 +204,15 @@ const Form = (updatedFormData: PropsInterface) => {
                                     />
                                 </div>
                             </div>
-                            {updatedFormData.updatedFormData._id ? (
-                                <div className="flex justify-center my-5">
-                                    <button
-                                        type="button"
-                                        className="bg-gradient-linear-right text-white px-10 py-2 hover:bg-none hover:border-[#3d176b] hover:text-[#3d176b] border-2 rounded-full lg:text-normal"
-                                        onClick={handleUpdate}
-                                    >
-                                        Update
-                                    </button>
-                                </div>
-                            ) : (
-                                <div className="flex justify-center my-5">
-                                    <button
-                                        type="submit"
-                                        className="bg-gradient-linear-right text-white px-10 py-2 hover:bg-none hover:border-[#3d176b] hover:text-[#3d176b] border-2 rounded-full lg:text-normal"
-                                    >
-                                        Submit
-                                    </button>
-                                </div>
-                            )}
+                            <div className="flex justify-center my-5">
+                                <button
+                                    type="button"
+                                    className="bg-gradient-linear-right text-white px-10 py-2 hover:bg-none hover:border-[#3d176b] hover:text-[#3d176b] border-2 rounded-full lg:text-normal"
+                                    onClick={handleSaveUpdate}
+                                >
+                                    {props.updatedFormData._id ? "Update" : "save"}
+                                </button>
+                            </div>
                         </div>
                     )}
                 </form>

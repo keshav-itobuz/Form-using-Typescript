@@ -1,8 +1,9 @@
-import { notify } from './Toast'
+import { notify } from '../utils/Toast'
 import { FormData } from '../interface/interface'
 
 export function employeeDetailsValidator(formData: FormData) {
     const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/
+
     if (
         !formData.name ||
         !formData.email ||
