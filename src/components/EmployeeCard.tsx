@@ -1,9 +1,9 @@
-import customAxios from "../utils/customAxios"
-import { FormData } from "../interface/interface"
+import customAxios from '../utils/customAxios'
+import { FormData } from '../interface/interface'
 import { FaTrashAlt } from 'react-icons/fa'
 import { MdEdit } from 'react-icons/md'
-import { Dispatch, SetStateAction } from "react"
-import { confirmAlert } from "../utils/confirmAlert"
+import { Dispatch, SetStateAction } from 'react'
+import { confirmAlert } from '../utils/confirmAlert'
 type propsType = {
     formData: FormData[]
     setFormData: Dispatch<SetStateAction<FormData[]>>
@@ -66,7 +66,6 @@ function EmployeeCard(props: propsType) {
                 ))}
             </div>
         </div>
-
     )
 }
 

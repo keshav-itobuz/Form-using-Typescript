@@ -12,7 +12,9 @@ function GenericInput(props: PropsType) {
         <div className="flex flex-col gap-1 py-2 ">
             <p className=" font-default-font-family text-text-grey text-[0.8rem]">
                 {props.label}
-                {props.isRequired && <span className="ms-1 text-red-700">*</span>}
+                {props.isRequired && (
+                    <span className="ms-1 text-red-700">*</span>
+                )}
             </p>
             <input
                 type={props.type}

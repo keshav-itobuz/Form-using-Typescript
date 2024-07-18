@@ -5,8 +5,7 @@ export default {
         files: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
     },
     theme: {
-        extend: {
-        },
+        extend: {},
     },
     plugins: [],
 }

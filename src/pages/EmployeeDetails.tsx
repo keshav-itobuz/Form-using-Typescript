@@ -10,7 +10,6 @@ import GenericSelect from '../components/formComponent/GenericSelect'
 import { Profession } from '../enum/enum'
 import EmplopyeeModal from '../components/EmplopyeeModal'
 
-
 const EmployeeDetails = () => {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [employeeInfo, setEmployeeInfo] = useState<Array<FormData>>([])
@@ -76,7 +75,7 @@ const EmployeeDetails = () => {
             email: filteredData[0].email,
         }
         setFormData(updatingData)
-        setIsModalOpen(true);
+        setIsModalOpen(true)
     }
 
     const handleNewEntry = () => {
@@ -92,7 +91,7 @@ const EmployeeDetails = () => {
             email: '',
         }
         setFormData(updatingData)
-        setIsModalOpen(true);
+        setIsModalOpen(true)
     }
 
     const handlePagination = (pageRecord: string) => {
@@ -119,7 +118,7 @@ const EmployeeDetails = () => {
                             setPageNumber(0)
                             getData(e.target.value, 0, lastRecord)
                         }}
-                        defaultValue='all'
+                        defaultValue="all"
                         optionValues={ProfessionOption}
                         name="profession"
                     />
@@ -155,7 +154,11 @@ const EmployeeDetails = () => {
                     <span className="col-span-2 ">Phone No</span>
                 </div>
                 <div className=" h-[72vh] overflow-y-scroll no-scrollbar]">
-                    <EmployeeCard formData={employeeInfo} setFormData={setEmployeeInfo} handleEdit={handleEdit} />
+                    <EmployeeCard
+                        formData={employeeInfo}
+                        setFormData={setEmployeeInfo}
+                        handleEdit={handleEdit}
+                    />
                 </div>
             </div>
             <div className="flex justify-center mx-auto  max-w-[1200px] mt-10 gap-5">
@@ -169,7 +172,7 @@ const EmployeeDetails = () => {
                         }
                     }}
                 >
-                    <div className='text-[2rem]'>
+                    <div className="text-[2rem]">
                         <FaCaretLeft />
                     </div>
                 </button>
@@ -183,7 +186,7 @@ const EmployeeDetails = () => {
                     name="page"
                 />
 
-                <p className='mt-2'>
+                <p className="mt-2">
                     Record {pageNumber * 10 + 1}-
                     {lastRecord < totalRecord ? lastRecord : totalRecord} of{' '}
                     {totalRecord}
@@ -198,15 +201,19 @@ const EmployeeDetails = () => {
                         }
                     }}
                 >
-                    <div className='text-[2rem]'>
+                    <div className="text-[2rem]">
                         <FaCaretRight />
                     </div>
                 </button>
             </div>
 
-            {isModalOpen &&
-                < EmplopyeeModal setIsModalOpen={setIsModalOpen} employeeDetail={formData} setEmployeeDetail={setFormData} />
-            }
+            {isModalOpen && (
+                <EmplopyeeModal
+                    setIsModalOpen={setIsModalOpen}
+                    employeeDetail={formData}
+                    setEmployeeDetail={setFormData}
+                />
+            )}
         </div>
     )
 }
