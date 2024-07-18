@@ -1,9 +1,9 @@
-import Router from './Router'
+import EmployeeDetails from "./pages/EmployeeDetails"
 
 function App() {
     return (
         <>
-            <Router />
+            <EmployeeDetails />
         </>
     )
 }

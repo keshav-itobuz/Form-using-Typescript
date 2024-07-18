@@ -1,27 +1,38 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { FaTrashAlt } from 'react-icons/fa'
 import { MdEdit } from 'react-icons/md'
-import { notify } from '../utils/Toast'
+import { notify, notifySuccess } from '../utils/Toast'
 import { FormData } from '../interface/interface'
 import { confirmAlert } from '../utils/confirmAlert'
 import { FaCaretRight } from 'react-icons/fa'
 import { FaCaretLeft } from 'react-icons/fa'
 import customAxios from '../utils/customAxios'
 import GenericSelect from '../components/formComponent/GenericSelect'
+import { RxCross2 } from 'react-icons/rx';
 import { Profession } from '../enum/enum'
+import { formValidator } from '../validators/validator'
+import axios from 'axios'
+import GenericInput from '../components/formComponent/GenericInput'
 
-type PropsType = {
-    setUpdatedFormData: React.Dispatch<React.SetStateAction<FormData>>
-}
 
-const DataCards = (props: PropsType) => {
-    const { setUpdatedFormData } = props
+const EmployeeDetails = () => {
+    const [isModalOpen, setIsModalOpen] = useState(false)
     const [employeeInfo, setEmployeeInfo] = useState<Array<FormData>>([])
     const [pageNumber, setPageNumber] = useState<number>(0)
     const [lastRecord, setLastRecord] = useState<number>(10)
     const [profession, setProfession] = useState<string>('all')
     const [totalRecord, setTotalRecord] = useState<number>(1)
+    const [formData, setFormData] = useState<FormData>({
+        _id: '',
+        name: '',
+        profession: Profession.PROFESSION,
+        building: '',
+        city: '',
+        state: '',
+        pincode: '',
+        phone: '',
+        email: '',
+    })
     const recordsIndex = [10, 20, 30, 40, 50]
     const ProfessionOption = [
         'all',
@@ -31,7 +42,6 @@ const DataCards = (props: PropsType) => {
         'marketing',
         'hr',
     ]
-    const navigate = useNavigate()
 
     const getData = async (profession: string, page: number, limit: number) => {
         try {
@@ -42,6 +52,24 @@ const DataCards = (props: PropsType) => {
             setTotalRecord(employeeData.data.data.total)
         } catch (error) {
             console.log(error)
+        }
+    }
+
+    const handleSaveUpdate = async () => {
+        try {
+            const validate = formValidator(formData)
+            if (!validate) return
+            await customAxios.post('create-update-employee', {
+                formData,
+            })
+            setIsModalOpen(false)
+            getData(profession, pageNumber, lastRecord)
+            notifySuccess('sucessfully updated')
+        } catch (error) {
+            console.log(error)
+            if (axios.isAxiosError(error)) {
+                notify(error.response?.data.message)
+            }
         }
     }
 
@@ -81,8 +109,8 @@ const DataCards = (props: PropsType) => {
             phone: filteredData[0].phone,
             email: filteredData[0].email,
         }
-        setUpdatedFormData(updatingData)
-        navigate('/addData')
+        setFormData(updatingData)
+        setIsModalOpen(true);
     }
 
     const handleNewEntry = () => {
@@ -97,14 +125,18 @@ const DataCards = (props: PropsType) => {
             phone: '',
             email: '',
         }
-        setUpdatedFormData(updatingData)
-        navigate('/addData')
+        setFormData(updatingData)
+        setIsModalOpen(true);
     }
 
     const handlePagination = (pageRecord: string) => {
         getData(profession, 0, Number(pageRecord))
         setLastRecord(Number(pageRecord))
         setPageNumber(0)
+    }
+
+    const addFormData = (event: ChangeEvent<HTMLInputElement>) => {
+        setFormData({ ...formData, [event.target.name]: event.target.value })
     }
 
     useEffect(() => {
@@ -121,8 +153,10 @@ const DataCards = (props: PropsType) => {
                             setPageNumber(0)
                             getData(e.target.value, 0, lastRecord)
                         }}
+                        defaultValue='all'
                         optionValues={ProfessionOption}
                         name="profession"
+                        verticalPadding={1}
                     />
 
                     <div className="flex justify-center">
@@ -209,14 +243,18 @@ const DataCards = (props: PropsType) => {
                 >
                     <FaCaretLeft />
                 </button>
+
                 <GenericSelect
                     handleChange={(e) => {
                         handlePagination(e.target.value)
                     }}
+                    defaultValue={10}
                     optionValues={recordsIndex}
                     name="page"
+                    verticalPadding={1}
                 />
-                <p className="mt-[0.2rem]">
+
+                <p >
                     Record {pageNumber * 10 + 1}-
                     {lastRecord < totalRecord ? lastRecord : totalRecord} of{' '}
                     {totalRecord}
@@ -234,8 +272,114 @@ const DataCards = (props: PropsType) => {
                     <FaCaretRight />
                 </button>
             </div>
+
+            {isModalOpen &&
+                <div>
+                    <div className=" z-10 fixed inset-0 bg-black/60  flex ">
+                        <div className=" bg-white rounded-2xl m-auto p-5 md:p-7 flex flex-col">
+                            <div className="flex justify-between sm:gap-[200px]">
+                                <h2 className="text-[1.2rem] font-medium">Edit Response</h2>
+                                <button
+                                    className="border border-gray-300 rounded-md px-1 "
+                                    onClick={() => setIsModalOpen(false)}
+                                >
+                                    <RxCross2 />
+                                </button>
+                            </div>
+                            <GenericInput
+                                label='Name'
+                                isRequired={true}
+                                type="text"
+                                placeholder="Name*"
+                                name="name"
+                                value={formData.name}
+                                onChange={(e) => addFormData(e)}
+                            />
+                            <GenericInput
+                                isRequired={true}
+                                type="email"
+                                label='Email'
+                                placeholder="Email*"
+                                name="email"
+                                value={formData.email}
+                                onChange={(e) => addFormData(e)}
+                            />
+                            <div className='flex gap-2 md:flex-row flex-col'>
+                                <GenericInput
+                                    isRequired={false}
+                                    label='Phone No'
+                                    type="number"
+                                    placeholder="Phone No"
+                                    name="phone"
+                                    value={formData.phone}
+                                    onChange={(e) => addFormData(e)}
+                                />
+                                <div className="flex flex-col gap-1 py-2 w-full">
+                                    <p className=" font-default-font-family text-text-grey text-[0.8rem]">
+                                        Profession
+                                        <span className="ms-1 text-red-700">*</span>
+                                    </p>
+                                    <GenericSelect
+                                        name="profession"
+                                        defaultValue={formData.profession}
+                                        optionValues={ProfessionOption.filter((item) => item !== 'all')}
+                                        handleChange={(e) => {
+                                            setFormData({
+                                                ...formData,
+                                                [e.target.name]: e.target.value,
+                                            })
+                                        }}
+                                        verticalPadding={3}
+                                    />
+                                </div>
+                            </div>
+                            <GenericInput
+                                label='Building , Street'
+                                isRequired={true}
+                                type="text"
+                                placeholder="Building , Street*"
+                                name="building"
+                                value={formData.building}
+                                onChange={(e) => addFormData(e)}
+                            />
+                            <GenericInput
+                                label='City'
+                                isRequired={true}
+                                type="text"
+                                placeholder="City*"
+                                name="city"
+                                value={formData.city}
+                                onChange={(e) => addFormData(e)}
+                            />
+                            <div className="flex gap-2 md:flex-row flex-col ">
+                                <GenericInput
+                                    label='State'
+                                    isRequired={true}
+                                    type="text"
+                                    placeholder="State*"
+                                    name="state"
+                                    value={formData.state}
+                                    onChange={(e) => addFormData(e)}
+                                />
+                                <GenericInput
+                                    isRequired={true}
+                                    label='Pincode'
+                                    type="number"
+                                    placeholder="Pincode*"
+                                    name="pincode"
+                                    value={formData.pincode}
+                                    onChange={(e) => addFormData(e)}
+                                />
+                            </div>
+                            <div className="flex justify-center my-5">
+                                <button type="submit" className="w-[100%] bg-[#1444EF] border border-[#1444EF] text-white lg:p-3 p-[0.6rem] font-default-font-family hover:bg-transparent hover:text-[#1444EF] lg:rounded-md rounded-sm lg:text-normal text-[0.8rem]" onClick={handleSaveUpdate}>{formData._id ? "Update" : "save"}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
     )
 }
 
-export default DataCards
+export default EmployeeDetails

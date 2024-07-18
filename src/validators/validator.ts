@@ -1,7 +1,7 @@
 import { notify } from '../utils/Toast'
 import { FormData } from '../interface/interface'
 
-export function employeeDetailsValidator(formData: FormData) {
+export function formValidator(formData: FormData) {
     const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/
 
     if (
@@ -16,9 +16,6 @@ export function employeeDetailsValidator(formData: FormData) {
         notify('Invalid email')
         return false
     }
-    return true
-}
-export function addressValidator(formData: FormData) {
     if (
         !formData.building ||
         !formData.state ||
