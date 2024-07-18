@@ -2,15 +2,14 @@ type PropsType = {
     handleChange: React.ChangeEventHandler<HTMLSelectElement>
     optionValues: string[] | number[]
     name: string
-    verticalPadding:number
     defaultValue:string | number
 }
 
 function GenericSelect(props: PropsType) {
-    const { handleChange, optionValues, name , verticalPadding , defaultValue} = props
+    const { handleChange, optionValues, name , defaultValue} = props
     return (
         <select
-            className={`border border-[#C0CAD4] outline-none py-${verticalPadding} rounded-md px-2 cursor-pointer `}
+            className={`border border-[#C0CAD4] outline-none py-2 rounded-md px-2 cursor-pointer `}
             name={name}
             onChange={handleChange}
             defaultValue={defaultValue}

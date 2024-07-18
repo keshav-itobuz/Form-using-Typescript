@@ -1,23 +1,32 @@
 import customAxios from "../utils/customAxios"
+import { FormData } from "../interface/interface"
+import { FaTrashAlt } from 'react-icons/fa'
+import { MdEdit } from 'react-icons/md'
+import { Dispatch, SetStateAction } from "react"
+import { confirmAlert } from "../utils/confirmAlert"
 type propsType = {
-    formdata: FormData[]
+    formData: FormData[]
+    setFormData: Dispatch<SetStateAction<FormData[]>>
+    handleEdit: (id: string) => void
 }
 function EmployeeCard(props: propsType) {
+    const { formData, setFormData, handleEdit } = props
     const handleDelete = async (id: string) => {
         try {
             await customAxios.delete(`delete-employee?id=${id}`)
-            const filterData = props.formdata.filter((item) => {
+            const filterData = formData.filter((item) => {
                 return item._id !== id
             })
-            setEmployeeInfo(filterData)
+            setFormData(filterData)
         } catch (error) {
             console.log(error)
         }
     }
+
     return (
         <div>
             <div className=" h-[72vh] overflow-y-scroll no-scrollbar]">
-                {employeeInfo.map((data, index) => (
+                {formData.map((data, index) => (
                     <div
                         className=" grid grid-cols-12 bg-white border py-4"
                         key={index}
