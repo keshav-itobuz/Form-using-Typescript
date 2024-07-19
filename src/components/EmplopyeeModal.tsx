@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useEffect } from 'react'
 import { RxCross2 } from 'react-icons/rx'
 import { FormData } from '../interface/interface'
 import { formValidator } from '../validators/validator'
@@ -6,6 +6,7 @@ import customAxios from '../utils/customAxios'
 import axios from 'axios'
 import { notify, notifySuccess } from '../utils/Toast'
 import { useForm, SubmitHandler } from 'react-hook-form'
+import GenericInput from './formComponent/GenericInput'
 
 type propsType = {
     setIsModalOpen: Dispatch<SetStateAction<boolean>>
@@ -32,6 +33,7 @@ function EmplopyeeModal(props: propsType) {
     }
     const {
         register,
+        reset,
         handleSubmit,
         formState: { errors },
     } = useForm<FormData>()
@@ -50,9 +52,13 @@ function EmplopyeeModal(props: propsType) {
         'hr',
     ]
 
+    useEffect(() => {
+        reset(employeeDetail)
+    }, [employeeDetail])
+
     return (
         <div>
-            <div className=" z-10 fixed inset-0 bg-black/60  flex ">
+            <div className=" z-10 fixed inset-0 bg-black/60  flex  overflow-y-scroll no-scrollbar">
                 <div className=" bg-white rounded-2xl m-auto p-5 md:p-7 flex flex-col">
                     <div className="flex justify-between sm:gap-[200px]">
                         <h2 className="text-[1.2rem] font-medium">
@@ -66,52 +72,46 @@ function EmplopyeeModal(props: propsType) {
                         </button>
                     </div>
                     <form onSubmit={handleSubmit(onSubmit)}>
-                        <div className="flex flex-col gap-1 py-2 ">
-                            <p className=" font-default-font-family text-text-grey text-[0.8rem]">
-                                Name
-                            </p>
-                            <input
-                                type="text"
-                                placeholder="Name*"
-                                defaultValue={employeeDetail.name}
-                                className=" outline-none font-default-font-family placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
-                                {...register('name', { required: true })}
-                            />
-                            {errors.name && <span>This field is required</span>}
-                        </div>
+                        <GenericInput
+                            type="text"
+                            placeholder="Name"
+                            label="Name"
+                            name="name"
+                            isRequired={true}
+                            register={register}
+                        />
+                        {errors.name && (
+                            <span className="text-[0.8rem] text-red-700 ms-1">
+                                This field is required
+                            </span>
+                        )}
 
-                        <div className="flex flex-col gap-1 py-2 ">
-                            <p className=" font-default-font-family text-text-grey text-[0.8rem]">
-                                Email
-                            </p>
-                            <input
-                                type="email"
-                                placeholder="Email*"
-                                defaultValue={employeeDetail.email}
-                                className=" outline-none font-default-font-family placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
-                                {...register('email', { required: true })}
-                            />
-                            {errors.email && (
-                                <span>This field is required</span>
-                            )}
-                        </div>
+                        <GenericInput
+                            type="email"
+                            placeholder="Email"
+                            label="Email"
+                            name="email"
+                            isRequired={true}
+                            register={register}
+                        />
+                        {errors.name && (
+                            <span className="text-[0.8rem] text-red-700 ms-1">
+                                This field is required
+                            </span>
+                        )}
                         <div className="flex gap-2 md:flex-row flex-col">
-                            <div className="flex flex-col gap-1 py-2 ">
-                                <p className=" font-default-font-family text-text-grey text-[0.8rem]">
-                                    Phone
-                                </p>
-                                <input
-                                    type="number"
-                                    defaultValue={employeeDetail.phone}
-                                    placeholder="Phone No"
-                                    className=" outline-none font-default-font-family placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
-                                    {...register('phone', { required: true })}
-                                />
-                            </div>
+                            <GenericInput
+                                type="number"
+                                placeholder="Number"
+                                label="Phone No"
+                                name="phone"
+                                isRequired={false}
+                                register={register}
+                            />
+
                             <div className="flex flex-col gap-1 py-2 w-full">
                                 <p className=" font-default-font-family text-text-grey text-[0.8rem]">
                                     Profession
-                                    <span className="ms-1 text-red-700">*</span>
                                 </p>
                                 <select
                                     className="border border-[#C0CAD4] outline-none py-2 rounded-md px-2 cursor-pointer "
@@ -132,63 +132,62 @@ function EmplopyeeModal(props: propsType) {
                                 </select>
                             </div>
                         </div>
-                        <div className="flex flex-col gap-1 py-2 ">
-                            <p className=" font-default-font-family text-text-grey text-[0.8rem]">
-                                Building
-                            </p>
-                            <input
-                                type="text"
-                                defaultValue={employeeDetail.building}
-                                placeholder="Building , Street*"
-                                className=" outline-none font-default-font-family placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
-                                {...register('building', { required: true })}
-                            />
-                            {errors.building && (
-                                <span>This field is required</span>
-                            )}
-                        </div>
-                        <div className="flex flex-col gap-1 py-2 ">
-                            <p className=" font-default-font-family text-text-grey text-[0.8rem]">
-                                City
-                            </p>
-                            <input
-                                type="text"
-                                defaultValue={employeeDetail.city}
-                                placeholder="City*"
-                                className=" outline-none font-default-font-family placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
-                                {...register('city', { required: true })}
-                            />
-                            {errors.city && <span>This field is required</span>}
-                        </div>
+
+                        <GenericInput
+                            type="text"
+                            placeholder="Building"
+                            label="Building"
+                            name="building"
+                            isRequired={true}
+                            register={register}
+                        />
+                        {errors.building && (
+                            <span className="text-[0.8rem] text-red-700 ms-1">
+                                This field is required
+                            </span>
+                        )}
+                        <GenericInput
+                            type="text"
+                            placeholder="City"
+                            label="City"
+                            name="city"
+                            isRequired={true}
+                            register={register}
+                        />
+                        {errors.city && (
+                            <span className="text-[0.8rem] text-red-700 ms-1">
+                                This field is required
+                            </span>
+                        )}
                         <div className="flex gap-2 md:flex-row flex-col ">
-                            <div className="flex flex-col gap-1 py-2 ">
-                                <p className=" font-default-font-family text-text-grey text-[0.8rem]">
-                                    state
-                                </p>
-                                <input
+                            <div>
+                                <GenericInput
                                     type="text"
-                                    defaultValue={employeeDetail.state}
-                                    placeholder="State*"
-                                    className=" outline-none font-default-font-family placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
-                                    {...register('state', { required: true })}
+                                    placeholder="State"
+                                    label="State"
+                                    name="state"
+                                    isRequired={true}
+                                    register={register}
                                 />
                                 {errors.state && (
-                                    <span>This field is required</span>
+                                    <span className="text-[0.8rem] text-red-700 ms-1">
+                                        This field is required
+                                    </span>
                                 )}
                             </div>
-                            <div className="flex flex-col gap-1 py-2 ">
-                                <p className=" font-default-font-family text-text-grey text-[0.8rem]">
-                                    pincode
-                                </p>
-                                <input
-                                    type="number"
-                                    defaultValue={employeeDetail.pincode}
-                                    placeholder="Pincode*"
-                                    className=" outline-none font-default-font-family placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
-                                    {...register('pincode', { required: true })}
+                            <div>
+                                <GenericInput
+                                    type="text"
+                                    placeholder="Pincode"
+                                    label="Pincode"
+                                    name="pincode"
+                                    isRequired={true}
+                                    register={register}
                                 />
                                 {errors.pincode && (
-                                    <span>This field is required</span>
+                                    <span className="text-[0.8rem] text-red-700 ms-1">
+                                        This field is required
+                                    </span>
                                 )}
                             </div>
                         </div>

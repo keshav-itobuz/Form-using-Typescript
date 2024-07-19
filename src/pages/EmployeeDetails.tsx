@@ -146,14 +146,14 @@ const EmployeeDetails = () => {
                     Add Employee data
                 </p>
             </div>
-            <div className="max-w-[1200px] mx-auto">
+            <div className="max-w-[1200px] mx-auto ">
                 <div className=" grid grid-cols-12 bg-white py-2 border rounded-t-2xl">
                     <span className="col-span-2 ms-3 ">Name</span>
                     <span className="col-span-5 ">Address</span>
                     <span className="col-span-2">Email</span>
                     <span className="col-span-2 ">Phone No</span>
                 </div>
-                <div className=" h-[72vh] overflow-y-scroll no-scrollbar]">
+                <div className=" h-[70vh] overflow-y-scroll no-scrollbar">
                     <EmployeeCard
                         formData={employeeInfo}
                         setFormData={setEmployeeInfo}
