@@ -30,12 +30,12 @@ const EmployeeDetails = () => {
     })
     const recordsIndex = [10, 20, 30, 40, 50]
     const ProfessionOption = [
-        'all',
-        'manager',
-        'developer',
-        'designer',
-        'marketing',
-        'hr',
+        Profession.ALL,
+        Profession.MANAGER,
+        Profession.DEVELOPER,
+        Profession.DESIGNER,
+        Profession.MARKETING,
+        Profession.HR,
     ]
 
     const getData = async (profession: string, page: number, limit: number) => {
@@ -153,7 +153,7 @@ const EmployeeDetails = () => {
                     <span className="col-span-2">Email</span>
                     <span className="col-span-2 ">Phone No</span>
                 </div>
-                <div className=" h-[70vh] overflow-y-scroll no-scrollbar">
+                <div className=" h-[72vh] overflow-y-scroll no-scrollbar">
                     <EmployeeCard
                         formData={employeeInfo}
                         setFormData={setEmployeeInfo}
@@ -161,7 +161,7 @@ const EmployeeDetails = () => {
                     />
                 </div>
             </div>
-            <div className="flex justify-center mx-auto  max-w-[1200px] mt-10 gap-5">
+            <div className="flex justify-center mx-auto  max-w-[1200px] mt-6 gap-5">
                 <button
                     type="submit"
                     className={`text-[1.5rem] ${pageNumber > 0 ? 'text-black' : 'text-gray-400'}`}

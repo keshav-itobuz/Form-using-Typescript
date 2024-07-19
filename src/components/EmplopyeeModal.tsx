@@ -51,10 +51,9 @@ function EmplopyeeModal(props: propsType) {
         'marketing',
         'hr',
     ]
-
-    useEffect(() => {
+    useEffect(()=>{
         reset(employeeDetail)
-    }, [employeeDetail])
+    },[employeeDetail])
 
     return (
         <div>
@@ -82,7 +81,7 @@ function EmplopyeeModal(props: propsType) {
                         />
                         {errors.name && (
                             <span className="text-[0.8rem] text-red-700 ms-1">
-                                This field is required
+                                This field is required*
                             </span>
                         )}
 
@@ -96,7 +95,7 @@ function EmplopyeeModal(props: propsType) {
                         />
                         {errors.name && (
                             <span className="text-[0.8rem] text-red-700 ms-1">
-                                This field is required
+                                This field is required*
                             </span>
                         )}
                         <div className="flex gap-2 md:flex-row flex-col">
@@ -143,7 +142,7 @@ function EmplopyeeModal(props: propsType) {
                         />
                         {errors.building && (
                             <span className="text-[0.8rem] text-red-700 ms-1">
-                                This field is required
+                                This field is required*
                             </span>
                         )}
                         <GenericInput
@@ -156,7 +155,7 @@ function EmplopyeeModal(props: propsType) {
                         />
                         {errors.city && (
                             <span className="text-[0.8rem] text-red-700 ms-1">
-                                This field is required
+                                This field is required*
                             </span>
                         )}
                         <div className="flex gap-2 md:flex-row flex-col ">
@@ -171,7 +170,7 @@ function EmplopyeeModal(props: propsType) {
                                 />
                                 {errors.state && (
                                     <span className="text-[0.8rem] text-red-700 ms-1">
-                                        This field is required
+                                        This field is required*
                                     </span>
                                 )}
                             </div>
@@ -186,7 +185,7 @@ function EmplopyeeModal(props: propsType) {
                                 />
                                 {errors.pincode && (
                                     <span className="text-[0.8rem] text-red-700 ms-1">
-                                        This field is required
+                                        This field is required*
                                     </span>
                                 )}
                             </div>
