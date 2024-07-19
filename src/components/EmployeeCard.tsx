@@ -11,7 +11,7 @@ type propsType = {
     handleGetData: () => void
 }
 function EmployeeCard(props: propsType) {
-    const { employeeInfo  , handleGetData} = props
+    const { employeeInfo, handleGetData } = props
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [formData, setFormData] = useState<FormData>({
         _id: '',
@@ -28,12 +28,11 @@ function EmployeeCard(props: propsType) {
     const handleDelete = async (id: string) => {
         try {
             await customAxios.delete(`delete-employee?id=${id}`)
-            handleGetData();
+            handleGetData()
         } catch (error) {
             console.log(error)
         }
     }
-
 
     function handleEdit() {
         const updatingData = {
@@ -53,9 +52,7 @@ function EmployeeCard(props: propsType) {
 
     return (
         <div>
-            <div
-                className=" grid grid-cols-12 bg-white border py-4"
-            >
+            <div className=" grid grid-cols-12 bg-white border py-4">
                 <span className="col-span-2 ms-3 truncate">
                     {employeeInfo?.name[0].toLocaleUpperCase() +
                         employeeInfo?.name.slice(1)}{' '}
@@ -80,7 +77,8 @@ function EmployeeCard(props: propsType) {
                         className=" cursor-pointer"
                         onClick={() => {
                             confirmAlert(() => {
-                                employeeInfo?._id && handleDelete(employeeInfo?._id)
+                                employeeInfo?._id &&
+                                    handleDelete(employeeInfo?._id)
                             })
                         }}
                     >

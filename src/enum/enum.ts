@@ -1,5 +1,5 @@
 export enum Profession {
-    ALL='all',
+    ALL = 'all',
     PROFESSION = 'profession',
     MANAGER = 'manager',
     DEVELOPER = 'developer',

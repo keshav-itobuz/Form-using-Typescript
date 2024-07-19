@@ -40,13 +40,13 @@ const EmployeeDetails = () => {
         }
     }
 
-    const handleGetData = ()=>{
+    const handleGetData = () => {
         getData(profession, pageNumber, lastRecord)
     }
 
     const handleDeleteAll = async () => {
         try {
-            await customAxios.delete(`delete-all-employee`)
+            await customAxios.delete(`delete-employee`)
             setEmployeeInfo([])
         } catch (error) {
             console.log(error)
@@ -66,7 +66,6 @@ const EmployeeDetails = () => {
     useEffect(() => {
         getData(profession, pageNumber, 10)
     }, [pageNumber])
-
 
     return (
         <div className="bg-[#0597ff22] min-h-[100vh] pb-10 px-2">
@@ -115,13 +114,14 @@ const EmployeeDetails = () => {
                 </div>
                 <div className=" h-[72vh] overflow-y-scroll no-scrollbar]">
                     {employeeInfo.map((data, index) => {
-                        return (<EmployeeCard
-                            employeeInfo={data}
-                            key={index}
-                            handleGetData={handleGetData}
-                        />)
-                    }
-                    )}
+                        return (
+                            <EmployeeCard
+                                employeeInfo={data}
+                                key={index}
+                                handleGetData={handleGetData}
+                            />
+                        )
+                    })}
                 </div>
             </div>
             <div className="flex justify-center mx-auto  max-w-[1200px] mt-6 gap-5">
