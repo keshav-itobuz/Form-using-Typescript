@@ -17,17 +17,7 @@ const EmployeeDetails = () => {
     const [lastRecord, setLastRecord] = useState<number>(10)
     const [profession, setProfession] = useState<string>('all')
     const [totalRecord, setTotalRecord] = useState<number>(1)
-    const [formData, setFormData] = useState<FormData>({
-        _id: '',
-        name: '',
-        profession: Profession.PROFESSION,
-        building: '',
-        city: '',
-        state: '',
-        pincode: '',
-        phone: '',
-        email: '',
-    })
+
     const recordsIndex = [10, 20, 30, 40, 50]
     const ProfessionOption = [
         Profession.ALL,
@@ -50,6 +40,10 @@ const EmployeeDetails = () => {
         }
     }
 
+    const handleGetData = ()=>{
+        getData(profession, pageNumber, lastRecord)
+    }
+
     const handleDeleteAll = async () => {
         try {
             await customAxios.delete(`delete-all-employee`)
@@ -59,38 +53,7 @@ const EmployeeDetails = () => {
         }
     }
 
-    function handleEdit(id: string) {
-        const filteredData = employeeInfo.filter((item) => {
-            return item._id === id
-        })
-        const updatingData = {
-            _id: filteredData[0]._id,
-            name: filteredData[0].name,
-            building: filteredData[0].building,
-            profession: filteredData[0].profession,
-            city: filteredData[0].city,
-            state: filteredData[0].state,
-            pincode: filteredData[0].pincode,
-            phone: filteredData[0].phone,
-            email: filteredData[0].email,
-        }
-        setFormData(updatingData)
-        setIsModalOpen(true)
-    }
-
     const handleNewEntry = () => {
-        const updatingData = {
-            _id: '',
-            name: '',
-            building: '',
-            profession: Profession.PROFESSION,
-            city: '',
-            state: '',
-            pincode: '',
-            phone: '',
-            email: '',
-        }
-        setFormData(updatingData)
         setIsModalOpen(true)
     }
 
@@ -104,9 +67,6 @@ const EmployeeDetails = () => {
         getData(profession, pageNumber, 10)
     }, [pageNumber])
 
-    useEffect(() => {
-        getData(profession, pageNumber, lastRecord)
-    }, [isModalOpen])
 
     return (
         <div className="bg-[#0597ff22] min-h-[100vh] pb-10 px-2">
@@ -153,12 +113,15 @@ const EmployeeDetails = () => {
                     <span className="col-span-2">Email</span>
                     <span className="col-span-2 ">Phone No</span>
                 </div>
-                <div className=" h-[72vh] overflow-y-scroll no-scrollbar">
-                    <EmployeeCard
-                        formData={employeeInfo}
-                        setFormData={setEmployeeInfo}
-                        handleEdit={handleEdit}
-                    />
+                <div className=" h-[72vh] overflow-y-scroll no-scrollbar]">
+                    {employeeInfo.map((data, index) => {
+                        return (<EmployeeCard
+                            employeeInfo={data}
+                            key={index}
+                            handleGetData={handleGetData}
+                        />)
+                    }
+                    )}
                 </div>
             </div>
             <div className="flex justify-center mx-auto  max-w-[1200px] mt-6 gap-5">
@@ -210,8 +173,7 @@ const EmployeeDetails = () => {
             {isModalOpen && (
                 <EmplopyeeModal
                     setIsModalOpen={setIsModalOpen}
-                    employeeDetail={formData}
-                    setEmployeeDetail={setFormData}
+                    handleGetData={handleGetData}
                 />
             )}
         </div>

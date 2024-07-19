@@ -2,69 +2,99 @@ import customAxios from '../utils/customAxios'
 import { FormData } from '../interface/interface'
 import { FaTrashAlt } from 'react-icons/fa'
 import { MdEdit } from 'react-icons/md'
-import { Dispatch, SetStateAction } from 'react'
 import { confirmAlert } from '../utils/confirmAlert'
+import { useState } from 'react'
+import { Profession } from '../enum/enum'
+import EmplopyeeModal from './EmplopyeeModal'
 type propsType = {
-    formData: FormData[]
-    setFormData: Dispatch<SetStateAction<FormData[]>>
-    handleEdit: (id: string) => void
+    employeeInfo: FormData
+    handleGetData: () => void
 }
 function EmployeeCard(props: propsType) {
-    const { formData, setFormData, handleEdit } = props
+    const { employeeInfo  , handleGetData} = props
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [formData, setFormData] = useState<FormData>({
+        _id: '',
+        name: '',
+        profession: Profession.PROFESSION,
+        building: '',
+        city: '',
+        state: '',
+        pincode: '',
+        phone: '',
+        email: '',
+    })
+
     const handleDelete = async (id: string) => {
         try {
             await customAxios.delete(`delete-employee?id=${id}`)
-            const filterData = formData.filter((item) => {
-                return item._id !== id
-            })
-            setFormData(filterData)
+            handleGetData();
         } catch (error) {
             console.log(error)
         }
     }
 
+
+    function handleEdit() {
+        const updatingData = {
+            _id: employeeInfo?._id,
+            name: employeeInfo?.name,
+            building: employeeInfo?.building,
+            profession: employeeInfo?.profession,
+            city: employeeInfo?.city,
+            state: employeeInfo?.state,
+            pincode: employeeInfo?.pincode,
+            phone: employeeInfo?.phone,
+            email: employeeInfo?.email,
+        }
+        setFormData(updatingData)
+        setIsModalOpen(true)
+    }
+
     return (
         <div>
-            <div className=" h-[72vh] overflow-y-scroll no-scrollbar]">
-                {formData.map((data, index) => (
-                    <div
-                        className=" grid grid-cols-12 bg-white border py-4"
-                        key={index}
+            <div
+                className=" grid grid-cols-12 bg-white border py-4"
+            >
+                <span className="col-span-2 ms-3 truncate">
+                    {employeeInfo?.name[0].toLocaleUpperCase() +
+                        employeeInfo?.name.slice(1)}{' '}
+                </span>
+                <span className="col-span-5 pe-3">{`${employeeInfo?.building} ${employeeInfo?.city} ${employeeInfo?.state} - ${employeeInfo?.pincode}`}</span>
+                <span className="col-span-2 truncate pe-2">
+                    {employeeInfo?.email}
+                </span>
+                <span className="col-span-2 truncate">
+                    {!employeeInfo?.phone ? '---' : employeeInfo?.phone}
+                </span>
+                <span className="col-span-1 flex gap-8">
+                    <span
+                        className=" cursor-pointer"
+                        onClick={() => {
+                            handleEdit()
+                        }}
                     >
-                        <span className="col-span-2 ms-3 truncate">
-                            {data?.name[0].toLocaleUpperCase() +
-                                data?.name.slice(1)}{' '}
-                        </span>
-                        <span className="col-span-5 pe-3">{`${data?.building} ${data?.city} ${data?.state} - ${data?.pincode}`}</span>
-                        <span className="col-span-2 truncate pe-2">
-                            {data?.email}
-                        </span>
-                        <span className="col-span-2 truncate">
-                            {!data?.phone ? '---' : data?.phone}
-                        </span>
-                        <span className="col-span-1 flex gap-8">
-                            <span
-                                className=" cursor-pointer"
-                                onClick={() => {
-                                    data._id && handleEdit(data._id)
-                                }}
-                            >
-                                <MdEdit />
-                            </span>
-                            <span
-                                className=" cursor-pointer"
-                                onClick={() => {
-                                    confirmAlert(() => {
-                                        data._id && handleDelete(data._id)
-                                    })
-                                }}
-                            >
-                                <FaTrashAlt />
-                            </span>
-                        </span>
-                    </div>
-                ))}
+                        <MdEdit />
+                    </span>
+                    <span
+                        className=" cursor-pointer"
+                        onClick={() => {
+                            confirmAlert(() => {
+                                employeeInfo?._id && handleDelete(employeeInfo?._id)
+                            })
+                        }}
+                    >
+                        <FaTrashAlt />
+                    </span>
+                </span>
             </div>
+            {isModalOpen && (
+                <EmplopyeeModal
+                    setIsModalOpen={setIsModalOpen}
+                    employeeDetail={formData}
+                    handleGetData={handleGetData}
+                />
+            )}
         </div>
     )
 }

@@ -10,11 +10,11 @@ import GenericInput from './formComponent/GenericInput'
 
 type propsType = {
     setIsModalOpen: Dispatch<SetStateAction<boolean>>
-    employeeDetail: FormData
-    setEmployeeDetail: Dispatch<SetStateAction<FormData>>
+    handleGetData: () => void
+    employeeDetail?: FormData
 }
 function EmplopyeeModal(props: propsType) {
-    const { setIsModalOpen, employeeDetail, setEmployeeDetail } = props
+    const { setIsModalOpen, employeeDetail , handleGetData } = props
     const handleSaveUpdate = async (employeeData: FormData) => {
         try {
             const validate = formValidator(employeeData)
@@ -23,6 +23,7 @@ function EmplopyeeModal(props: propsType) {
                 employeeData,
             })
             setIsModalOpen(false)
+            handleGetData()
             notifySuccess('sucessfully updated')
         } catch (error) {
             console.log(error)
@@ -38,8 +39,7 @@ function EmplopyeeModal(props: propsType) {
         formState: { errors },
     } = useForm<FormData>()
     const onSubmit: SubmitHandler<FormData> = (data) => {
-        data._id = employeeDetail._id
-        setEmployeeDetail(data)
+        data._id = employeeDetail && employeeDetail._id
         handleSaveUpdate(data)
     }
 
@@ -51,9 +51,9 @@ function EmplopyeeModal(props: propsType) {
         'marketing',
         'hr',
     ]
-    useEffect(()=>{
-        reset(employeeDetail)
-    },[employeeDetail])
+    useEffect(() => {
+        employeeDetail && reset(employeeDetail)
+    }, [employeeDetail])
 
     return (
         <div>
@@ -114,7 +114,7 @@ function EmplopyeeModal(props: propsType) {
                                 </p>
                                 <select
                                     className="border border-[#C0CAD4] outline-none py-2 rounded-md px-2 cursor-pointer "
-                                    defaultValue={employeeDetail.profession}
+                                    defaultValue={employeeDetail && employeeDetail.profession}
                                     {...register('profession', {
                                         required: true,
                                     })}
@@ -195,7 +195,7 @@ function EmplopyeeModal(props: propsType) {
                                 type="submit"
                                 className="w-[100%] bg-[#1444EF] border border-[#1444EF] text-white lg:p-3 p-[0.6rem] font-default-font-family hover:bg-transparent hover:text-[#1444EF] lg:rounded-md rounded-sm lg:text-normal text-[0.8rem]"
                             >
-                                {employeeDetail._id ? 'Update' : 'save'}
+                                {employeeDetail && employeeDetail._id ? 'Update' : 'save'}
                             </button>
                         </div>
                     </form>
