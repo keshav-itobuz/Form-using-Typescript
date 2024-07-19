@@ -20,7 +20,7 @@ function GenericInput(props: PropsType) {
                 type={type}
                 placeholder={placeholder}
                 className=" outline-none font-default-font-family placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
-                {...register(name as keyof FormData, { required: true })}
+                {...register(name as keyof FormData, { required: isRequired })}
             />
         </div>
     )

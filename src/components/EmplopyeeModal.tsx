@@ -1,12 +1,13 @@
 import { Dispatch, SetStateAction, useEffect } from 'react'
 import { RxCross2 } from 'react-icons/rx'
 import { FormData } from '../interface/interface'
-import { formValidator } from '../validators/validator'
 import customAxios from '../utils/customAxios'
-import axios from 'axios'
-import { notify, notifySuccess } from '../utils/Toast'
+import { notifySuccess } from '../utils/Toast'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import GenericInput from './formComponent/GenericInput'
+import employeeSchema from '../validators/employeeValidator'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 type propsType = {
     setIsModalOpen: Dispatch<SetStateAction<boolean>>
@@ -17,8 +18,6 @@ function EmplopyeeModal(props: propsType) {
     const { setIsModalOpen, employeeDetail, handleGetData } = props
     const handleSaveUpdate = async (employeeData: FormData) => {
         try {
-            const validate = formValidator(employeeData)
-            if (!validate) return
             await customAxios.post('create-update-employee', {
                 employeeData,
             })
@@ -27,9 +26,9 @@ function EmplopyeeModal(props: propsType) {
             notifySuccess('sucessfully updated')
         } catch (error) {
             console.log(error)
-            if (axios.isAxiosError(error)) {
-                notify(error.response?.data.message)
-            }
+            if (error instanceof z.ZodError) {
+                console.log(error.issues);
+              }
         }
     }
     const {
@@ -37,8 +36,11 @@ function EmplopyeeModal(props: propsType) {
         reset,
         handleSubmit,
         formState: { errors },
-    } = useForm<FormData>()
+    } = useForm<FormData>(({ resolver: zodResolver(employeeSchema) }))
+
     const onSubmit: SubmitHandler<FormData> = (data) => {
+        const validate = employeeSchema.safeParse(data);
+        if(validate.error?.issues) return
         data._id = employeeDetail && employeeDetail._id
         handleSaveUpdate(data)
     }
@@ -81,7 +83,7 @@ function EmplopyeeModal(props: propsType) {
                         />
                         {errors.name && (
                             <span className="text-[0.8rem] text-red-700 ms-1">
-                                This field is required*
+                                {errors.name.message}
                             </span>
                         )}
 
@@ -93,9 +95,9 @@ function EmplopyeeModal(props: propsType) {
                             isRequired={true}
                             register={register}
                         />
-                        {errors.name && (
+                        {errors.email && (
                             <span className="text-[0.8rem] text-red-700 ms-1">
-                                This field is required*
+                                {errors.email.message}
                             </span>
                         )}
                         <div className="flex gap-2 md:flex-row flex-col">
@@ -145,7 +147,7 @@ function EmplopyeeModal(props: propsType) {
                         />
                         {errors.building && (
                             <span className="text-[0.8rem] text-red-700 ms-1">
-                                This field is required*
+                                {errors.building.message}
                             </span>
                         )}
                         <GenericInput
@@ -158,7 +160,7 @@ function EmplopyeeModal(props: propsType) {
                         />
                         {errors.city && (
                             <span className="text-[0.8rem] text-red-700 ms-1">
-                                This field is required*
+                                {errors.city.message}
                             </span>
                         )}
                         <div className="flex gap-2 md:flex-row flex-col ">
@@ -173,13 +175,13 @@ function EmplopyeeModal(props: propsType) {
                                 />
                                 {errors.state && (
                                     <span className="text-[0.8rem] text-red-700 ms-1">
-                                        This field is required*
+                                        {errors.state.message}
                                     </span>
                                 )}
                             </div>
                             <div>
                                 <GenericInput
-                                    type="text"
+                                    type="number"
                                     placeholder="Pincode"
                                     label="Pincode"
                                     name="pincode"
@@ -188,7 +190,7 @@ function EmplopyeeModal(props: propsType) {
                                 />
                                 {errors.pincode && (
                                     <span className="text-[0.8rem] text-red-700 ms-1">
-                                        This field is required*
+                                        {errors.pincode.message}
                                     </span>
                                 )}
                             </div>

@@ -46,7 +46,7 @@ const EmployeeDetails = () => {
 
     const handleDeleteAll = async () => {
         try {
-            await customAxios.delete(`delete-employee`)
+            await customAxios.delete(`delete-all-employee`)
             setEmployeeInfo([])
         } catch (error) {
             console.log(error)
