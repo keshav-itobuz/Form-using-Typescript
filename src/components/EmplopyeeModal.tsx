@@ -28,7 +28,7 @@ function EmplopyeeModal(props: propsType) {
             console.log(error)
             if (error instanceof z.ZodError) {
                 console.log(error.issues);
-              }
+            }
         }
     }
     const {
@@ -39,8 +39,6 @@ function EmplopyeeModal(props: propsType) {
     } = useForm<FormData>(({ resolver: zodResolver(employeeSchema) }))
 
     const onSubmit: SubmitHandler<FormData> = (data) => {
-        const validate = employeeSchema.safeParse(data);
-        if(validate.error?.issues) return
         data._id = employeeDetail && employeeDetail._id
         handleSaveUpdate(data)
     }

@@ -7,6 +7,8 @@ const employeeSchema: ZodType<FormData> = z.object({
         .string({ required_error: "Name is required" })
         .trim()
         .min(2, { message: "Minimum 2 characters required" }),
+    phone: z.
+        string().max(10).optional(),
     building: z
         .string()
         .min(1, { message: "This field is required" }),
