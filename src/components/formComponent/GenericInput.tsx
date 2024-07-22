@@ -1,20 +1,19 @@
-import { zodResolver } from '@hookform/resolvers/zod'
 import { FormData } from '../../interface/interface'
-import { useForm, UseFormRegister } from 'react-hook-form'
-import employeeSchema from '../../validators/employeeValidator'
+import { useFormContext } from 'react-hook-form'
 type PropsType = {
     type: string
-    placeholder: string
-    name: string
+    fieldName: string
     label: string
     isRequired: boolean
-    register: UseFormRegister<FormData>
 }
 function GenericInput(props: PropsType) {
-    const { register, type, placeholder, name, isRequired, label } = props
+    const { type, fieldName, isRequired, label } = props
     const {
-        formState: { errors },
-    } = useForm<FormData>({ resolver: zodResolver(employeeSchema) })
+        register,
+        formState: { errors }
+    } = useFormContext()
+
+
     return (
         <div className="flex flex-col py-2 ">
             <p className=" font-default-font-family text-text-grey text-[0.8rem]">
@@ -23,15 +22,17 @@ function GenericInput(props: PropsType) {
             </p>
             <input
                 type={type}
-                placeholder={placeholder}
+                placeholder={label}
                 className=" outline-none font-default-font-family placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
-                {...register(name as keyof FormData, { required: isRequired })}
+                {...register(fieldName as keyof FormData, { required: isRequired })}
             />
-            {errors.pincode && (
-                <span className="text-[0.8rem] text-red-700 ms-1">
-                    {errors.pincode.message}
-                </span>
-            )}
+            <div className='h-2'>
+                {errors && (
+                    <span className="text-[0.8rem] text-red-700 ms-1">
+                        { errors[fieldName]?.message as string}
+                    </span>
+                )}
+            </div>
         </div>
     )
 }

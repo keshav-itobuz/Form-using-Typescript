@@ -3,7 +3,7 @@ import { RxCross2 } from 'react-icons/rx'
 import { FormData } from '../interface/interface'
 import customAxios from '../utils/customAxios'
 import { notifySuccess } from '../utils/Toast'
-import { useForm, SubmitHandler } from 'react-hook-form'
+import { useForm, FormProvider, SubmitHandler } from "react-hook-form"
 import GenericInput from './formComponent/GenericInput'
 import employeeSchema from '../validators/employeeValidator'
 import { z } from 'zod'
@@ -39,12 +39,7 @@ function EmplopyeeModal(props: propsType) {
             }
         }
     }
-    const {
-        register,
-        reset,
-        handleSubmit,
-        formState: { errors },
-    } = useForm<FormData>({ resolver: zodResolver(employeeSchema) })
+    const methods = useForm<FormData>({ resolver: zodResolver(employeeSchema) })
 
     const onSubmit: SubmitHandler<FormData> = (data) => {
         data._id = employeeDetail && employeeDetail._id
@@ -60,11 +55,11 @@ function EmplopyeeModal(props: propsType) {
         Profession.HR,
     ]
     useEffect(() => {
-        employeeDetail && reset(employeeDetail)
+        employeeDetail && methods.reset(employeeDetail)
     }, [employeeDetail])
 
     return (
-        <div>
+        <FormProvider {...methods}>
             <div className=" z-10 fixed inset-0 bg-black/60  flex  overflow-y-scroll no-scrollbar">
                 <div className=" bg-white rounded-2xl m-auto p-5 md:p-7 flex flex-col">
                     <div className="flex justify-between sm:gap-[200px]">
@@ -78,44 +73,27 @@ function EmplopyeeModal(props: propsType) {
                             <RxCross2 />
                         </button>
                     </div>
-                    <form onSubmit={handleSubmit(onSubmit)}>
+                    <form onSubmit={methods.handleSubmit(onSubmit)}>
                         <GenericInput
                             type="text"
-                            placeholder="Name"
                             label="Name"
-                            name="name"
-                            isRequired={true}
-                            register={register}
+                            fieldName="name"
+                            isRequired={true} 
                         />
-                        {errors.name && (
-                            <span className="text-[0.8rem] text-red-700 ms-1">
-                                {errors.name.message}
-                            </span>
-                        )}
-
                         <GenericInput
                             type="email"
-                            placeholder="Email"
                             label="Email"
-                            name="email"
+                            fieldName="email"
                             isRequired={true}
-                            register={register}
                         />
-                        {errors.email && (
-                            <span className="text-[0.8rem] text-red-700 ms-1">
-                                {errors.email.message}
-                            </span>
-                        )}
                         <div className="flex gap-2 md:flex-row flex-col">
                             <GenericInput
                                 type="number"
-                                placeholder="Number"
                                 label="Phone No"
-                                name="phone"
+                                fieldName="phone"
                                 isRequired={false}
-                                register={register}
+                                
                             />
-
                             <div className="flex flex-col gap-1 py-2 w-full">
                                 <p className=" font-default-font-family text-text-grey text-[0.8rem]">
                                     Profession
@@ -126,7 +104,7 @@ function EmplopyeeModal(props: propsType) {
                                         employeeDetail &&
                                         employeeDetail.profession
                                     }
-                                    {...register('profession', {
+                                    {...methods.register('profession', {
                                         required: true,
                                     })}
                                 >
@@ -142,63 +120,34 @@ function EmplopyeeModal(props: propsType) {
                                 </select>
                             </div>
                         </div>
-
                         <GenericInput
                             type="text"
-                            placeholder="Building"
                             label="Building"
-                            name="building"
+                            fieldName="building"
                             isRequired={true}
-                            register={register}
                         />
-                        {errors.building && (
-                            <span className="text-[0.8rem] text-red-700 ms-1">
-                                {errors.building.message}
-                            </span>
-                        )}
                         <GenericInput
                             type="text"
-                            placeholder="City"
                             label="City"
-                            name="city"
+                            fieldName="city"
                             isRequired={true}
-                            register={register}
                         />
-                        {errors.city && (
-                            <span className="text-[0.8rem] text-red-700 ms-1">
-                                {errors.city.message}
-                            </span>
-                        )}
                         <div className="flex gap-2 md:flex-row flex-col ">
                             <div>
                                 <GenericInput
                                     type="text"
-                                    placeholder="State"
                                     label="State"
-                                    name="state"
+                                    fieldName="state"
                                     isRequired={true}
-                                    register={register}
                                 />
-                                {errors.state && (
-                                    <span className="text-[0.8rem] text-red-700 ms-1">
-                                        {errors.state.message}
-                                    </span>
-                                )}
                             </div>
                             <div>
                                 <GenericInput
                                     type="number"
-                                    placeholder="Pincode"
                                     label="Pincode"
-                                    name="pincode"
+                                    fieldName="pincode"
                                     isRequired={true}
-                                    register={register}
                                 />
-                                {errors.pincode && (
-                                    <span className="text-[0.8rem] text-red-700 ms-1">
-                                        {errors.pincode.message}
-                                    </span>
-                                )}
                             </div>
                         </div>
                         <div className="flex justify-center my-5">
@@ -214,7 +163,7 @@ function EmplopyeeModal(props: propsType) {
                     </form>
                 </div>
             </div>
-        </div>
+        </FormProvider>
     )
 }
 
