@@ -1,13 +1,11 @@
+import { FC, InputHTMLAttributes } from 'react'
 import { FormData } from '../../interface/interface'
 import { useFormContext } from 'react-hook-form'
-type PropsType = {
-    fieldName: string
+type PropsType = InputHTMLAttributes<HTMLInputElement> & {
     label: string
     isRequired: boolean
-    type:string
 }
-function GenericInput(props: PropsType) {
-    const { type, fieldName, isRequired, label } = props
+const GenericInput: FC<PropsType> = ({ label, isRequired, ...props }) => {
     const {
         register,
         formState: { errors }
@@ -15,24 +13,25 @@ function GenericInput(props: PropsType) {
 
 
     return (
-        <div className="flex flex-col py-2 ">
+        <div className="flex flex-col py-2">
             <p className=" font-default-font-family text-text-grey text-[0.8rem]">
                 {label}
                 {isRequired && <span className="ms-1 text-red-700">*</span>}
             </p>
             <input
-                type={type}
                 placeholder={label}
                 className=" outline-none font-default-font-family placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
-                {...register(fieldName as keyof FormData, { required: isRequired })}
+                {...register(props.name as keyof FormData, { required: isRequired })}
+                {...props}
             />
-            <div className='h-2'>
-                {errors && (
-                    <span className="text-[0.8rem] text-red-700 ms-1">
-                        { errors[fieldName]?.message as string}
+            <div className='h-1'>
+                {errors[props.name as keyof FormData]?.message && (
+                    <span className="text-[0.8rem] text-red-700 mt-1">
+                        {errors[props.name as keyof FormData]?.message as string}
                     </span>
                 )}
             </div>
+
         </div>
     )
 }
