@@ -17,9 +17,7 @@ function GenericSelect(props: PropsType) {
             {optionValues.map((value: string | number) => {
                 return (
                     <option value={value} key={value}>
-                        {typeof value === 'string'
-                            ? value[0].toUpperCase() + value.slice(1)
-                            : value}
+                        {value}
                     </option>
                 )
             })}

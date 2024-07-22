@@ -5,11 +5,9 @@ import { MdEdit } from 'react-icons/md'
 import { confirmAlert } from '../utils/confirmAlert'
 import { useState } from 'react'
 import EmplopyeeModal from './EmplopyeeModal'
-type propsType = {
-    employeeInfo: FormData
-}
-function EmployeeCard(props: propsType) {
-    const { employeeInfo } = props
+
+function EmployeeCard({employeeInfo}:{employeeInfo: FormData}) {
+
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [employeeData, setEmployeeData] = useState<FormData | undefined>(
         employeeInfo
@@ -34,9 +32,7 @@ function EmployeeCard(props: propsType) {
             {employeeData && (
                 <div className=" grid grid-cols-12 bg-white border py-4">
                     <span className="col-span-2 ms-3 truncate">
-                        {employeeData &&
-                            employeeData.name[0].toLocaleUpperCase() +
-                                employeeData?.name.slice(1)}{' '}
+                        {employeeData.name}
                     </span>
                     <span className="col-span-5 pe-3">{`${employeeData?.building} ${employeeData?.city} ${employeeData?.state} - ${employeeData?.pincode}`}</span>
                     <span className="col-span-2 truncate pe-2">
@@ -70,9 +66,9 @@ function EmployeeCard(props: propsType) {
             )}
             {isModalOpen && (
                 <EmplopyeeModal
-                    setIsModalOpen={setIsModalOpen}
+                    setIsModalOpen={() => { setIsModalOpen(false) }}
                     employeeDetail={employeeData}
-                    setEmployeeDetail={setEmployeeData}
+                    setEmployeeDetail={(data)=>{setEmployeeData(data)}}
                 />
             )}
         </div>

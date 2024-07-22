@@ -1,10 +1,10 @@
 import { FormData } from '../../interface/interface'
 import { useFormContext } from 'react-hook-form'
 type PropsType = {
-    type: string
     fieldName: string
     label: string
     isRequired: boolean
+    type:string
 }
 function GenericInput(props: PropsType) {
     const { type, fieldName, isRequired, label } = props
