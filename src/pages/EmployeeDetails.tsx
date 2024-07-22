@@ -114,13 +114,7 @@ const EmployeeDetails = () => {
                 </div>
                 <div className=" h-[72vh] overflow-y-scroll no-scrollbar]">
                     {employeeInfo.map((data, index) => {
-                        return (
-                            <EmployeeCard
-                                employeeInfo={data}
-                                key={index}
-                                handleGetData={handleGetData}
-                            />
-                        )
+                        return <EmployeeCard employeeInfo={data} key={index} />
                     })}
                 </div>
             </div>
@@ -173,7 +167,7 @@ const EmployeeDetails = () => {
             {isModalOpen && (
                 <EmplopyeeModal
                     setIsModalOpen={setIsModalOpen}
-                    handleGetData={handleGetData}
+                    handleFormData={handleGetData}
                 />
             )}
         </div>

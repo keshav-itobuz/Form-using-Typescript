@@ -8,26 +8,34 @@ import GenericInput from './formComponent/GenericInput'
 import employeeSchema from '../validators/employeeValidator'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Profession } from '../enum/enum'
 
 type propsType = {
     setIsModalOpen: Dispatch<SetStateAction<boolean>>
-    handleGetData: () => void
+    handleFormData?: () => void
     employeeDetail?: FormData
+    setEmployeeDetail?: Dispatch<SetStateAction<FormData | undefined>>
 }
 function EmplopyeeModal(props: propsType) {
-    const { setIsModalOpen, employeeDetail, handleGetData } = props
+    const {
+        setIsModalOpen,
+        employeeDetail,
+        setEmployeeDetail,
+        handleFormData,
+    } = props
     const handleSaveUpdate = async (employeeData: FormData) => {
         try {
             await customAxios.post('create-update-employee', {
                 employeeData,
             })
             setIsModalOpen(false)
-            handleGetData()
+            if (setEmployeeDetail) setEmployeeDetail(employeeData)
+            if (handleFormData) handleFormData()
             notifySuccess('sucessfully updated')
         } catch (error) {
             console.log(error)
             if (error instanceof z.ZodError) {
-                console.log(error.issues);
+                console.log(error.issues)
             }
         }
     }
@@ -36,7 +44,7 @@ function EmplopyeeModal(props: propsType) {
         reset,
         handleSubmit,
         formState: { errors },
-    } = useForm<FormData>(({ resolver: zodResolver(employeeSchema) }))
+    } = useForm<FormData>({ resolver: zodResolver(employeeSchema) })
 
     const onSubmit: SubmitHandler<FormData> = (data) => {
         data._id = employeeDetail && employeeDetail._id
@@ -44,12 +52,12 @@ function EmplopyeeModal(props: propsType) {
     }
 
     const ProfessionOption = [
-        'all',
-        'manager',
-        'developer',
-        'designer',
-        'marketing',
-        'hr',
+        Profession.ALL,
+        Profession.MANAGER,
+        Profession.DEVELOPER,
+        Profession.DESIGNER,
+        Profession.MARKETING,
+        Profession.HR,
     ]
     useEffect(() => {
         employeeDetail && reset(employeeDetail)
