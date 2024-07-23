@@ -125,9 +125,6 @@ function EmplopyeeModal({
                                     employeeDetail && employeeDetail.profession
                                 }
                                 name="profession"
-                                // {...methods.register('profession', {
-                                //     required: true,
-                                // })}
                             >
                                 {Object.values(Profession)
                                     .filter((item) => item !== Profession.ALL)

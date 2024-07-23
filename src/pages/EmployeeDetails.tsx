@@ -9,6 +9,7 @@ import GenericSelect from '../components/formComponent/GenericSelect'
 import { Profession } from '../enum/enum'
 import EmplopyeeModal from '../components/EmplopyeeModal'
 import GenericButton from '../components/formComponent/GenericButton'
+import { FormProvider, useForm } from 'react-hook-form'
 
 const EmployeeDetails = () => {
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -18,8 +19,12 @@ const EmployeeDetails = () => {
     const [profession, setProfession] = useState<string>(Profession.ALL)
     const [totalRecord, setTotalRecord] = useState<number>(1)
     const [searchedName, setSearchedName] = useState<string>('')
-
     const recordsIndex = [10, 20, 30, 40, 50]
+
+    type SelectType = {
+        profession?: Profession
+        page?: number
+    }
 
     const getData = async (
         profession: string,
@@ -31,7 +36,6 @@ const EmployeeDetails = () => {
             const employeeData = await customAxios.get(
                 `get-employee?profession=${profession}&page=${page}&limit=${limit}&searchedName=${searchedName}`
             )
-            console.log(employeeData.data.data.employeeData)
             setEmployeeInfo(employeeData.data.data.employeeData)
             setTotalRecord(employeeData.data.data.total)
         } catch (error) {
@@ -56,8 +60,8 @@ const EmployeeDetails = () => {
         setIsModalOpen(true)
     }
 
-    const handlePagination = (pageRecord: string) => {
-        getData(profession, 0, Number(pageRecord), searchedName)
+    const handlePagination = (pageRecord: number) => {
+        getData(profession, 0, pageRecord, searchedName)
         setLastRecord(Number(pageRecord))
         setPageNumber(0)
     }
@@ -81,127 +85,139 @@ const EmployeeDetails = () => {
         getData(profession, pageNumber, lastRecord, e.target.value)
     }
 
+    const methods = useForm<SelectType>()
+
     useEffect(() => {
         getData(profession, pageNumber, 10, searchedName)
     }, [pageNumber])
 
     return (
-        <div className="bg-[#0597ff22] min-h-[100vh] pb-10 px-2">
-            <div className="flex max-w-[1200px] justify-between mx-auto py-7">
-                <div className="flex gap-1">
-                    <GenericSelect
-                        onChange={(e) => {
-                            setProfession(e.target.value)
-                            setPageNumber(0)
-                            getData(e.target.value, 0, lastRecord, searchedName)
-                        }}
-                        defaultValue={Profession.ALL}
-                        name="profession"
+        <FormProvider {...methods}>
+            <div className="bg-[#0597ff22] min-h-[100vh] pb-10 px-2">
+                <div className="flex max-w-[1200px] justify-between mx-auto py-7">
+                    <div className="flex gap-1">
+                        <form
+                            onChange={methods.handleSubmit((data) => {
+                                setProfession(data.profession!)
+                                setPageNumber(0)
+                                getData(
+                                    data.profession!,
+                                    0,
+                                    lastRecord,
+                                    searchedName
+                                )
+                            })}
+                        >
+                            <GenericSelect
+                                defaultValue={Profession.ALL}
+                                name="profession"
+                            >
+                                {Object.values(Profession)
+                                    .filter(
+                                        (item) => item !== Profession.PROFESSION
+                                    )
+                                    .map((value: string | number) => {
+                                        return (
+                                            <option value={value} key={value}>
+                                                {value}
+                                            </option>
+                                        )
+                                    })}
+                            </GenericSelect>
+                        </form>
+                        <div className="flex justify-center">
+                            <GenericButton
+                                type="submit"
+                                className={`text-white px-5 py-2 border-2 bg-red-700 hover:bg-red-800 rounded-md ${employeeInfo.length ? 'visible' : 'hidden'}`}
+                                onClick={() => {
+                                    confirmAlert(handleDeleteAll)
+                                }}
+                            >
+                                Delete All
+                            </GenericButton>
+                        </div>
+                        <input
+                            placeholder="Search Name"
+                            className=" outline-none font-default-font-family placeholder-[#ABABB2] border-[0.1rem] border-[#C0CAD4] p-[0.8rem] text-[0.9rem] rounded-md"
+                            onChange={(e) => handleSearch(e)}
+                        />
+                    </div>
+                    <GenericButton
+                        className=" text-violet-900 cursor-pointer me-2"
+                        onClick={handleNewEntry}
                     >
-                        {Object.values(Profession).map(
-                            (value: string | number) => {
+                        Add Employee data
+                    </GenericButton>
+                </div>
+                <div className="max-w-[1200px] mx-auto ">
+                    <div className=" grid grid-cols-12 bg-white py-2 border rounded-t-2xl">
+                        <span className="col-span-2 ms-3 ">Name</span>
+                        <span className="col-span-5 ">Address</span>
+                        <span className="col-span-2">Email</span>
+                        <span className="col-span-2 ">Phone No</span>
+                    </div>
+                    <div className=" h-[72vh] overflow-y-scroll no-scrollbar]">
+                        {employeeInfo.map((data) => {
+                            return (
+                                <EmployeeCard
+                                    employeeInfo={data}
+                                    handleGetData={() => handleGetData()}
+                                    key={data._id}
+                                />
+                            )
+                        })}
+                    </div>
+                </div>
+                <div className="flex justify-center mx-auto  max-w-[1200px] mt-6 gap-5">
+                    <GenericButton
+                        type="submit"
+                        className={`text-[1.5rem] ${pageNumber > 0 ? 'text-black' : 'text-gray-400'}`}
+                        onClick={previousPage}
+                    >
+                        <div className="text-[2rem]">
+                            <FaCaretLeft />
+                        </div>
+                    </GenericButton>
+                    <form
+                        onChange={methods.handleSubmit((data) =>
+                            handlePagination(data.page!)
+                        )}
+                    >
+                        <GenericSelect defaultValue={10} name="page">
+                            {recordsIndex.map((value) => {
                                 return (
                                     <option value={value} key={value}>
                                         {value}
                                     </option>
                                 )
-                            }
-                        )}
-                    </GenericSelect>
-                    <div className="flex justify-center">
-                        <GenericButton
-                            type="submit"
-                            className={`text-white px-5 py-2 border-2 bg-red-700 hover:bg-red-800 rounded-md ${employeeInfo.length ? 'visible' : 'hidden'}`}
-                            onClick={() => {
-                                confirmAlert(handleDeleteAll)
-                            }}
-                        >
-                            Delete All
-                        </GenericButton>
-                    </div>
-                    <input
-                        placeholder="Search Name"
-                        className=" outline-none font-default-font-family placeholder-[#ABABB2] border-[0.1rem] border-[#C0CAD4] p-[0.8rem] text-[0.9rem] rounded-md"
-                        onChange={(e) => handleSearch(e)}
+                            })}
+                        </GenericSelect>
+                    </form>
+                    <p className="mt-2">
+                        Record {pageNumber * 10 + 1}-
+                        {lastRecord < totalRecord ? lastRecord : totalRecord} of{' '}
+                        {totalRecord}
+                    </p>
+
+                    <GenericButton
+                        type="submit"
+                        className={`text-[1.5rem] ${lastRecord < totalRecord ? 'text-black' : 'text-gray-400'}`}
+                        onClick={setNextPage}
+                    >
+                        <div className="text-[2rem]">
+                            <FaCaretRight />
+                        </div>
+                    </GenericButton>
+                </div>
+
+                {isModalOpen && (
+                    <EmplopyeeModal
+                        setIsModalOpen={() => setIsModalOpen(false)}
+                        handleFormData={() => handleGetData()}
                     />
-                </div>
-                <GenericButton
-                    className=" text-violet-900 cursor-pointer me-2"
-                    onClick={handleNewEntry}
-                >
-                    Add Employee data
-                </GenericButton>
+                )}
             </div>
-            <div className="max-w-[1200px] mx-auto ">
-                <div className=" grid grid-cols-12 bg-white py-2 border rounded-t-2xl">
-                    <span className="col-span-2 ms-3 ">Name</span>
-                    <span className="col-span-5 ">Address</span>
-                    <span className="col-span-2">Email</span>
-                    <span className="col-span-2 ">Phone No</span>
-                </div>
-                <div className=" h-[72vh] overflow-y-scroll no-scrollbar]">
-                    {employeeInfo.map((data) => {
-                        return (
-                            <EmployeeCard
-                                employeeInfo={data}
-                                handleGetData={() => handleGetData()}
-                                key={data._id}
-                            />
-                        )
-                    })}
-                </div>
-            </div>
-            <div className="flex justify-center mx-auto  max-w-[1200px] mt-6 gap-5">
-                <GenericButton
-                    type="submit"
-                    className={`text-[1.5rem] ${pageNumber > 0 ? 'text-black' : 'text-gray-400'}`}
-                    onClick={previousPage}
-                >
-                    <div className="text-[2rem]">
-                        <FaCaretLeft />
-                    </div>
-                </GenericButton>
-
-                <GenericSelect
-                    onChange={(e) => {
-                        handlePagination(e.target.value)
-                    }}
-                    defaultValue={10}
-                    name="page"
-                >
-                    {recordsIndex.map((value) => {
-                        return (
-                            <option value={value} key={value}>
-                                {value}
-                            </option>
-                        )
-                    })}
-                </GenericSelect>
-
-                <p className="mt-2">
-                    Record {pageNumber * 10 + 1}-
-                    {lastRecord < totalRecord ? lastRecord : totalRecord} of{' '}
-                    {totalRecord}
-                </p>
-
-                <GenericButton
-                    type="submit"
-                    className={`text-[1.5rem] ${lastRecord < totalRecord ? 'text-black' : 'text-gray-400'}`}
-                    onClick={setNextPage}
-                >
-                    <div className="text-[2rem]">
-                        <FaCaretRight />
-                    </div>
-                </GenericButton>
-            </div>
-
-            {isModalOpen && (
-                <EmplopyeeModal
-                    setIsModalOpen={() => setIsModalOpen(false)}
-                    handleFormData={() => handleGetData()}
-                />
-            )}
-        </div>
+        </FormProvider>
     )
 }
 
