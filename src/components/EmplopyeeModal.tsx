@@ -77,20 +77,20 @@ function EmplopyeeModal(props: propsType) {
                         <GenericInput
                             type="text"
                             label="Name"
-                            fieldName="name"
+                            name="name"
                             isRequired={true} 
                         />
                         <GenericInput
                             type="email"
                             label="Email"
-                            fieldName="email"
+                            name="email"
                             isRequired={true}
                         />
                         <div className="flex gap-2 md:flex-row flex-col">
                             <GenericInput
                                 type="number"
                                 label="Phone No"
-                                fieldName="phone"
+                                name="phone"
                                 isRequired={false}
                                 
                             />
@@ -123,13 +123,13 @@ function EmplopyeeModal(props: propsType) {
                         <GenericInput
                             type="text"
                             label="Building"
-                            fieldName="building"
+                            name="building"
                             isRequired={true}
                         />
                         <GenericInput
                             type="text"
                             label="City"
-                            fieldName="city"
+                            name="city"
                             isRequired={true}
                         />
                         <div className="flex gap-2 md:flex-row flex-col ">
@@ -137,7 +137,7 @@ function EmplopyeeModal(props: propsType) {
                                 <GenericInput
                                     type="text"
                                     label="State"
-                                    fieldName="state"
+                                    name="state"
                                     isRequired={true}
                                 />
                             </div>
@@ -145,7 +145,7 @@ function EmplopyeeModal(props: propsType) {
                                 <GenericInput
                                     type="number"
                                     label="Pincode"
-                                    fieldName="pincode"
+                                    name="pincode"
                                     isRequired={true}
                                 />
                             </div>

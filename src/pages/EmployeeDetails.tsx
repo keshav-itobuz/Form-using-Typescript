@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import EmployeeCard from '../components/EmployeeCard'
 import { FormData } from '../interface/interface'
 import { confirmAlert } from '../utils/confirmAlert'
@@ -16,6 +16,7 @@ const EmployeeDetails = () => {
     const [lastRecord, setLastRecord] = useState<number>(10)
     const [profession, setProfession] = useState<string>(Profession.ALL)
     const [totalRecord, setTotalRecord] = useState<number>(1)
+    const [searchedName, setSearchedName] = useState<string>('')
 
     const recordsIndex = [10, 20, 30, 40, 50]
     const ProfessionOption = [
@@ -27,11 +28,17 @@ const EmployeeDetails = () => {
         Profession.HR,
     ]
 
-    const getData = async (profession: string, page: number, limit: number) => {
+    const getData = async (
+        profession: string,
+        page: number,
+        limit: number,
+        searchedName: string
+    ) => {
         try {
             const employeeData = await customAxios.get(
-                `get-employee?profession=${profession}&page=${page}&limit=${limit}`
+                `get-employee?profession=${profession}&page=${page}&limit=${limit}&searchedName=${searchedName}`
             )
+            console.log(employeeData.data.data.employeeData)
             setEmployeeInfo(employeeData.data.data.employeeData)
             setTotalRecord(employeeData.data.data.total)
         } catch (error) {
@@ -40,7 +47,7 @@ const EmployeeDetails = () => {
     }
 
     const handleGetData = () => {
-        getData(profession, pageNumber, lastRecord)
+        getData(profession, pageNumber, lastRecord, searchedName)
     }
 
     const handleDeleteAll = async () => {
@@ -57,7 +64,7 @@ const EmployeeDetails = () => {
     }
 
     const handlePagination = (pageRecord: string) => {
-        getData(profession, 0, Number(pageRecord))
+        getData(profession, 0, Number(pageRecord), searchedName)
         setLastRecord(Number(pageRecord))
         setPageNumber(0)
     }
@@ -76,8 +83,13 @@ const EmployeeDetails = () => {
         }
     }
 
+    const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+        setSearchedName(e.target.value)
+        getData(profession, pageNumber, lastRecord, e.target.value)
+    }
+
     useEffect(() => {
-        getData(profession, pageNumber, 10)
+        getData(profession, pageNumber, 10, searchedName)
     }, [pageNumber])
 
     return (
@@ -88,7 +100,7 @@ const EmployeeDetails = () => {
                         handleChange={(e) => {
                             setProfession(e.target.value)
                             setPageNumber(0)
-                            getData(e.target.value, 0, lastRecord)
+                            getData(e.target.value, 0, lastRecord, searchedName)
                         }}
                         defaultValue={Profession.ALL}
                         optionValues={ProfessionOption}
@@ -96,15 +108,22 @@ const EmployeeDetails = () => {
                     />
                     <div className="flex justify-center">
                         {
-                            employeeInfo.length && <button
+                            <button
                                 type="submit"
-                                className=" text-white px-5 py-2 border-2 bg-red-700 hover:bg-red-800 rounded-md "
-                                onClick={() => { confirmAlert(handleDeleteAll) }}
+                                className={`text-white px-5 py-2 border-2 bg-red-700 hover:bg-red-800 rounded-md ${employeeInfo.length ? 'visible' : 'hidden'}`}
+                                onClick={() => {
+                                    confirmAlert(handleDeleteAll)
+                                }}
                             >
                                 Delete All
                             </button>
                         }
                     </div>
+                    <input
+                        placeholder="Search Name"
+                        className=" outline-none font-default-font-family placeholder-[#ABABB2] placeholder-font-[0.5rem] border-[0.1rem] border-[#C0CAD4] lg:p-[0.8rem] p-[0.4rem] text-[0.9rem] font-medium rounded-md"
+                        onChange={(e) => handleSearch(e)}
+                    />
                 </div>
                 <button
                     className=" text-violet-900 cursor-pointer me-2"
@@ -121,8 +140,14 @@ const EmployeeDetails = () => {
                     <span className="col-span-2 ">Phone No</span>
                 </div>
                 <div className=" h-[72vh] overflow-y-scroll no-scrollbar]">
-                    {employeeInfo.map((data, index) => {
-                        return <EmployeeCard employeeInfo={data} key={index} />
+                    {employeeInfo.map((data) => {
+                        return (
+                            <EmployeeCard
+                                employeeInfo={data}
+                                handleGetData={() => handleGetData()}
+                                key={data._id}
+                            />
+                        )
                     })}
                 </div>
             </div>

@@ -3,10 +3,15 @@ import { FormData } from '../interface/interface'
 import { FaTrashAlt } from 'react-icons/fa'
 import { MdEdit } from 'react-icons/md'
 import { confirmAlert } from '../utils/confirmAlert'
-import { useState } from 'react'
+import { FC, useState } from 'react'
 import EmplopyeeModal from './EmplopyeeModal'
 
-function EmployeeCard({employeeInfo}:{employeeInfo: FormData}) {
+type propsType = {
+    employeeInfo: FormData,
+    handleGetData: () => void
+}
+
+const EmployeeCard: FC<propsType> = ({ employeeInfo, handleGetData }) => {
 
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [employeeData, setEmployeeData] = useState<FormData | undefined>(
@@ -16,7 +21,7 @@ function EmployeeCard({employeeInfo}:{employeeInfo: FormData}) {
     const handleDelete = async (id: string) => {
         try {
             await customAxios.delete(`delete-employee?id=${id}`)
-            setEmployeeData(undefined)
+            handleGetData()
         } catch (error) {
             console.log(error)
         }
@@ -68,7 +73,7 @@ function EmployeeCard({employeeInfo}:{employeeInfo: FormData}) {
                 <EmplopyeeModal
                     setIsModalOpen={() => { setIsModalOpen(false) }}
                     employeeDetail={employeeData}
-                    setEmployeeDetail={(data)=>{setEmployeeData(data)}}
+                    setEmployeeDetail={(data) => { setEmployeeData(data) }}
                 />
             )}
         </div>
