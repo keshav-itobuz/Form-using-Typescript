@@ -1,9 +1,9 @@
 export enum Profession {
-    ALL = 'all',
-    PROFESSION = 'profession',
-    MANAGER = 'manager',
-    DEVELOPER = 'developer',
-    DESIGNER = 'designer',
-    MARKETING = 'marketing',
-    HR = 'hr',
+    ALL = 'All',
+    PROFESSION = 'Profession',
+    MANAGER = 'Manager',
+    DEVELOPER = 'Developer',
+    DESIGNER = 'Designer',
+    MARKETING = 'Marketing',
+    HR = 'Hr',
 }

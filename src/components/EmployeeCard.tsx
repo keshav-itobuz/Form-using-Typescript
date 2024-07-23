@@ -6,13 +6,12 @@ import { confirmAlert } from '../utils/confirmAlert'
 import { FC, useState } from 'react'
 import EmplopyeeModal from './EmplopyeeModal'
 
-type propsType = {
-    employeeInfo: FormData,
+type PropsType = {
+    employeeInfo: FormData
     handleGetData: () => void
 }
 
-const EmployeeCard: FC<propsType> = ({ employeeInfo, handleGetData }) => {
-
+const EmployeeCard: FC<PropsType> = ({ employeeInfo, handleGetData }) => {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [employeeData, setEmployeeData] = useState<FormData | undefined>(
         employeeInfo
@@ -71,9 +70,13 @@ const EmployeeCard: FC<propsType> = ({ employeeInfo, handleGetData }) => {
             )}
             {isModalOpen && (
                 <EmplopyeeModal
-                    setIsModalOpen={() => { setIsModalOpen(false) }}
+                    setIsModalOpen={() => {
+                        setIsModalOpen(false)
+                    }}
                     employeeDetail={employeeData}
-                    setEmployeeDetail={(data) => { setEmployeeData(data) }}
+                    setEmployeeDetail={(data) => {
+                        setEmployeeData(data)
+                    }}
                 />
             )}
         </div>

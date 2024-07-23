@@ -1,11 +1,9 @@
-import { ButtonHTMLAttributes, FC } from "react"
-type propsType = {
-    props: ButtonHTMLAttributes<HTMLButtonElement>
-}
-const GenericButton: FC<propsType> = ({ props }) => {
+import { ButtonHTMLAttributes, FC } from 'react'
+
+const GenericButton: FC<ButtonHTMLAttributes<HTMLButtonElement>> = (props) => {
     return (
         <button
-            className="w-[100%] bg-[#1444EF] border border-[#1444EF] text-white lg:p-3 p-[0.6rem] font-default-font-family hover:bg-transparent hover:text-[#1444EF] lg:rounded-md rounded-sm lg:text-normal text-[0.8rem]"
+            className={`w-[100%] bg-[#1444EF] border border-[#1444EF] text-white p-3 hover:bg-transparent hover:text-[#1444EF] rounded-md  text-[0.8rem] ${props.className}`}
             {...props}
         >
             {props.children}

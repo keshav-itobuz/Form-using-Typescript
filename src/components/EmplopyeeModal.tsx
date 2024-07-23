@@ -3,26 +3,65 @@ import { RxCross2 } from 'react-icons/rx'
 import { FormData } from '../interface/interface'
 import customAxios from '../utils/customAxios'
 import { notifySuccess } from '../utils/Toast'
-import { useForm, FormProvider, SubmitHandler } from "react-hook-form"
+import { useForm, FormProvider, SubmitHandler } from 'react-hook-form'
 import GenericInput from './formComponent/GenericInput'
 import employeeSchema from '../validators/employeeValidator'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Profession } from '../enum/enum'
+import GenericButton from './formComponent/GenericButton'
+import GenericSelect from './formComponent/GenericSelect'
 
-type propsType = {
+type PropsType = {
     setIsModalOpen: Dispatch<SetStateAction<boolean>>
     handleFormData?: () => void
     employeeDetail?: FormData
     setEmployeeDetail?: Dispatch<SetStateAction<FormData | undefined>>
 }
-function EmplopyeeModal(props: propsType) {
-    const {
-        setIsModalOpen,
-        employeeDetail,
-        setEmployeeDetail,
-        handleFormData,
-    } = props
+function EmplopyeeModal({
+    setIsModalOpen,
+    employeeDetail,
+    setEmployeeDetail,
+    handleFormData,
+}: PropsType) {
+    const genericInputData = [
+        {
+            type: 'text',
+            placeholder: 'Name',
+            name: 'name',
+        },
+        {
+            type: 'email',
+            placeholder: 'Email',
+            name: 'email',
+        },
+        {
+            type: 'number',
+            placeholder: 'Phone No',
+            name: 'phone',
+        },
+        {
+            type: 'text',
+            placeholder: 'Building',
+            name: 'building',
+        },
+        {
+            type: 'text',
+            placeholder: 'City',
+            name: 'city',
+        },
+        {
+            type: 'text',
+            placeholder: 'State',
+            name: 'state',
+        },
+        {
+            type: 'number',
+            placeholder: 'Pincode',
+            name: 'pincode',
+        },
+    ]
+
     const handleSaveUpdate = async (employeeData: FormData) => {
         try {
             await customAxios.post('create-update-employee', {
@@ -46,14 +85,6 @@ function EmplopyeeModal(props: propsType) {
         handleSaveUpdate(data)
     }
 
-    const ProfessionOption = [
-        Profession.ALL,
-        Profession.MANAGER,
-        Profession.DEVELOPER,
-        Profession.DESIGNER,
-        Profession.MARKETING,
-        Profession.HR,
-    ]
     useEffect(() => {
         employeeDetail && methods.reset(employeeDetail)
     }, [employeeDetail])
@@ -74,91 +105,47 @@ function EmplopyeeModal(props: propsType) {
                         </button>
                     </div>
                     <form onSubmit={methods.handleSubmit(onSubmit)}>
-                        <GenericInput
-                            type="text"
-                            label="Name"
-                            name="name"
-                            isRequired={true} 
-                        />
-                        <GenericInput
-                            type="email"
-                            label="Email"
-                            name="email"
-                            isRequired={true}
-                        />
-                        <div className="flex gap-2 md:flex-row flex-col">
-                            <GenericInput
-                                type="number"
-                                label="Phone No"
-                                name="phone"
-                                isRequired={false}
-                                
-                            />
-                            <div className="flex flex-col gap-1 py-2 w-full">
-                                <p className=" font-default-font-family text-text-grey text-[0.8rem]">
-                                    Profession
-                                </p>
-                                <select
-                                    className="border border-[#C0CAD4] outline-none py-2 rounded-md px-2 cursor-pointer "
-                                    defaultValue={
-                                        employeeDetail &&
-                                        employeeDetail.profession
-                                    }
-                                    {...methods.register('profession', {
-                                        required: true,
-                                    })}
-                                >
-                                    {ProfessionOption.filter(
-                                        (item) => item !== 'all'
-                                    ).map((item, index) => {
+                        {genericInputData.map((item, index) => {
+                            return (
+                                <GenericInput
+                                    type={item.type}
+                                    placeholder={item.placeholder}
+                                    name={item.name}
+                                    key={index}
+                                />
+                            )
+                        })}
+                        <div className="flex flex-col gap-1 py-2 w-full">
+                            <p className=" font-default-font-family text-text-grey text-[0.8rem]">
+                                Profession
+                            </p>
+                            <GenericSelect
+                                className="border border-[#C0CAD4] outline-none py-2 rounded-md px-2 cursor-pointer "
+                                defaultValue={
+                                    employeeDetail && employeeDetail.profession
+                                }
+                                name="profession"
+                                // {...methods.register('profession', {
+                                //     required: true,
+                                // })}
+                            >
+                                {Object.values(Profession)
+                                    .filter((item) => item !== Profession.ALL)
+                                    .map((item, index) => {
                                         return (
                                             <option value={item} key={index}>
                                                 {item}
                                             </option>
                                         )
                                     })}
-                                </select>
-                            </div>
-                        </div>
-                        <GenericInput
-                            type="text"
-                            label="Building"
-                            name="building"
-                            isRequired={true}
-                        />
-                        <GenericInput
-                            type="text"
-                            label="City"
-                            name="city"
-                            isRequired={true}
-                        />
-                        <div className="flex gap-2 md:flex-row flex-col ">
-                            <div>
-                                <GenericInput
-                                    type="text"
-                                    label="State"
-                                    name="state"
-                                    isRequired={true}
-                                />
-                            </div>
-                            <div>
-                                <GenericInput
-                                    type="number"
-                                    label="Pincode"
-                                    name="pincode"
-                                    isRequired={true}
-                                />
-                            </div>
+                            </GenericSelect>
                         </div>
                         <div className="flex justify-center my-5">
-                            <button
-                                type="submit"
-                                className="w-[100%] bg-[#1444EF] border border-[#1444EF] text-white lg:p-3 p-[0.6rem] font-default-font-family hover:bg-transparent hover:text-[#1444EF] lg:rounded-md rounded-sm lg:text-normal text-[0.8rem]"
-                            >
+                            <GenericButton type="submit">
                                 {employeeDetail && employeeDetail._id
                                     ? 'Update'
                                     : 'save'}
-                            </button>
+                            </GenericButton>
                         </div>
                     </form>
                 </div>
