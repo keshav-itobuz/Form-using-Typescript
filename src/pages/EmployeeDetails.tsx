@@ -157,15 +157,21 @@ const EmployeeDetails = () => {
                         <span className="col-span-2 ">Phone No</span>
                     </div>
                     <div className=" h-[72vh] overflow-y-scroll no-scrollbar]">
-                        {employeeInfo.map((data) => {
-                            return (
-                                <EmployeeCard
-                                    employeeInfo={data}
-                                    handleGetData={() => handleGetData()}
-                                    key={data._id}
-                                />
-                            )
-                        })}
+                        {employeeInfo.length ? (
+                            employeeInfo.map((data) => {
+                                return (
+                                    <EmployeeCard
+                                        employeeInfo={data}
+                                        handleGetData={() => handleGetData()}
+                                        key={data._id}
+                                    />
+                                )
+                            })
+                        ) : (
+                            <div className="mt-[30vh] text-center">
+                                No data to show
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className="flex justify-center mx-auto  max-w-[1200px] mt-6 gap-5">
