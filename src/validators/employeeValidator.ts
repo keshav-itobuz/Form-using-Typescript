@@ -1,31 +1,26 @@
-import { z, ZodType } from 'zod'
+import * as yup from 'yup'
 import { Profession } from '../enum/enum'
-import { FormData } from '../interface/interface'
 
-const employeeSchema: ZodType<FormData> = z.object({
-    name: z
-        .string({ required_error: 'Name is required' })
-        .trim()
-        .min(2, { message: 'Minimum 2 characters required' }),
-    phone: z.string().max(10).optional(),
-    building: z.string().min(1, { message: 'This field is required' }),
-    profession: z.enum([
-        Profession.DESIGNER,
-        Profession.DEVELOPER,
-        Profession.HR,
-        Profession.MANAGER,
-        Profession.MANAGER,
-        Profession.MARKETING,
-    ]),
-    city: z.string().min(1, { message: 'This field is required' }),
-    state: z
-        .string({ required_error: 'state is required' })
-        .min(1, { message: 'This field is required' }),
-    pincode: z
+const employeeSchema = yup.object({
+    name: yup
         .string()
-        .min(6, { message: 'Invalid Pincode' })
-        .max(6, { message: 'Invalid Pincode' }),
-    email: z.string().email({ message: 'Invalid email' }),
+        .required('required')
+        .trim()
+        .min(2, 'Minimum 2 characters required'),
+    phone: yup.string().max(10, 'Phone number must be at most 10 characters'),
+    building: yup.string().required('required'),
+    profession: yup
+        .mixed<Profession>()
+        .oneOf(Object.values(Profession), 'Invalid profession')
+        .required('required'),
+    city: yup.string().required('required'),
+    state: yup.string().required('required'),
+    pincode: yup
+        .string()
+        .required('required')
+        .min(6, 'Invalid Pincode')
+        .max(6, 'Invalid Pincode'),
+    email: yup.string().email('Invalid email').required('required'),
 })
 
 export default employeeSchema

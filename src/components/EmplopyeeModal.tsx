@@ -6,11 +6,10 @@ import { notifySuccess } from '../utils/Toast'
 import { useForm, FormProvider, SubmitHandler } from 'react-hook-form'
 import GenericInput from './FormComponent/GenericInput'
 import employeeSchema from '../validators/employeeValidator'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { Profession } from '../enum/enum'
 import GenericButton from './FormComponent/GenericButton'
 import GenericSelect from './FormComponent/GenericSelect'
+import { yupResolver } from '@hookform/resolvers/yup'
 
 type PropsType = {
     setIsModalOpen: Dispatch<SetStateAction<boolean>>
@@ -73,12 +72,12 @@ function EmplopyeeModal({
             notifySuccess('sucessfully updated')
         } catch (error) {
             console.log(error)
-            if (error instanceof z.ZodError) {
-                console.log(error.issues)
-            }
+            // if (error instanceof z.ZodError) {
+            //     console.log(error.issues)
+            // }
         }
     }
-    const methods = useForm<FormData>({ resolver: zodResolver(employeeSchema) })
+    const methods = useForm<FormData>({ resolver: yupResolver(employeeSchema) })
 
     const onSubmit: SubmitHandler<FormData> = (data) => {
         data._id = employeeDetail && employeeDetail._id
