@@ -1,4 +1,4 @@
-import EmployeeDetails from './pages/EmployeeDetails'
+import EmployeeDetails from './Pages/EmployeeDetails'
 
 function App() {
     return (

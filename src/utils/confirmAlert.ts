@@ -8,14 +8,25 @@ export const confirmAlert = <T>(handleFunction: () => T) => {
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Yes, delete it!',
-    }).then((result) => {
-        if (result.isConfirmed) {
-            handleFunction()
-            Swal.fire({
-                title: 'Deleted!',
-                text: 'Your file has been deleted.',
-                icon: 'success',
-            })
-        }
     })
+        .then((result) => {
+            if (result.isConfirmed) {
+                return handleFunction()
+            }
+        })
+        .then((result) => {
+            if (result) {
+                Swal.fire({
+                    title: 'Deleted!',
+                    text: 'Your file has been deleted.',
+                    icon: 'success',
+                })
+            } else {
+                Swal.fire({
+                    title: 'Error! Try Again',
+                    text: 'Your file has not been deleted.',
+                    icon: 'warning',
+                })
+            }
+        })
 }

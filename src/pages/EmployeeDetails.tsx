@@ -4,18 +4,18 @@ import { FormData } from '../interface/interface'
 import { confirmAlert } from '../utils/confirmAlert'
 import { FaCaretRight } from 'react-icons/fa'
 import { FaCaretLeft } from 'react-icons/fa'
-import customAxios from '../utils/customAxios'
-import GenericSelect from '../components/formComponent/GenericSelect'
+import axiosInstance from '../utils/axiosInstance'
+import GenericSelect from '../components/FormComponent/GenericSelect'
 import { Profession } from '../enum/enum'
 import EmplopyeeModal from '../components/EmplopyeeModal'
-import GenericButton from '../components/formComponent/GenericButton'
+import GenericButton from '../components/FormComponent/GenericButton'
 import { FormProvider, useForm } from 'react-hook-form'
 
 const EmployeeDetails = () => {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [employeeInfo, setEmployeeInfo] = useState<Array<FormData>>([])
-    const [pageNumber, setPageNumber] = useState<number>(0)
-    const [lastRecord, setLastRecord] = useState<number>(10)
+    const [currentPage, setCurrentPage] = useState<number>(0)
+    const [currentPageRecord, setCurrentPageRecord] = useState<number>(10)
     const [profession, setProfession] = useState<string>(Profession.ALL)
     const [totalRecord, setTotalRecord] = useState<number>(1)
     const [searchedName, setSearchedName] = useState<string>('')
@@ -33,23 +33,25 @@ const EmployeeDetails = () => {
         searchedName: string
     ) => {
         try {
-            const employeeData = await customAxios.get(
+            const { data } = await axiosInstance.get(
                 `get-employee?profession=${profession}&page=${page}&limit=${limit}&searchedName=${searchedName}`
             )
-            setEmployeeInfo(employeeData.data.data.employeeData)
-            setTotalRecord(employeeData.data.data.total)
+            if (data) {
+                setEmployeeInfo(data.employeeData)
+                setTotalRecord(data.total)
+            }
         } catch (error) {
             console.log(error)
         }
     }
 
     const handleGetData = () => {
-        getData(profession, pageNumber, lastRecord, searchedName)
+        getData(profession, currentPage, currentPageRecord, searchedName)
     }
 
     const handleDeleteAll = async () => {
         try {
-            await customAxios.delete(`delete-employee`)
+            await axiosInstance.delete(`delete-employee`)
             setEmployeeInfo([])
         } catch (error) {
             console.log(error)
@@ -62,34 +64,34 @@ const EmployeeDetails = () => {
 
     const handlePagination = (pageRecord: number) => {
         getData(profession, 0, pageRecord, searchedName)
-        setLastRecord(Number(pageRecord))
-        setPageNumber(0)
+        setCurrentPageRecord(Number(pageRecord))
+        setCurrentPage(0)
     }
 
     const setNextPage = () => {
-        if (lastRecord < totalRecord) {
-            setPageNumber(pageNumber + 1)
-            setLastRecord((pageNumber + 1) * 10 + 10)
+        if (currentPageRecord < totalRecord) {
+            setCurrentPage(currentPage + 1)
+            setCurrentPageRecord((currentPage + 1) * 10 + 10)
         }
     }
 
     const previousPage = () => {
-        if (pageNumber > 0) {
-            setPageNumber(pageNumber - 1)
-            setLastRecord((pageNumber + 1) * 10 - 10)
+        if (currentPage > 0) {
+            setCurrentPage(currentPage - 1)
+            setCurrentPageRecord((currentPage + 1) * 10 - 10)
         }
     }
 
     const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
         setSearchedName(e.target.value)
-        getData(profession, pageNumber, lastRecord, e.target.value)
+        getData(profession, currentPage, currentPageRecord, e.target.value)
     }
 
     const methods = useForm<SelectType>()
 
     useEffect(() => {
-        getData(profession, pageNumber, 10, searchedName)
-    }, [pageNumber])
+        getData(profession, currentPage, 10, searchedName)
+    }, [currentPage])
 
     return (
         <FormProvider {...methods}>
@@ -99,11 +101,11 @@ const EmployeeDetails = () => {
                         <form
                             onChange={methods.handleSubmit((data) => {
                                 setProfession(data.profession!)
-                                setPageNumber(0)
+                                setCurrentPage(0)
                                 getData(
                                     data.profession!,
                                     0,
-                                    lastRecord,
+                                    currentPageRecord,
                                     searchedName
                                 )
                             })}
@@ -177,7 +179,7 @@ const EmployeeDetails = () => {
                 <div className="flex justify-center mx-auto  max-w-[1200px] mt-6 gap-5">
                     <GenericButton
                         type="submit"
-                        className={`text-[1.5rem] ${pageNumber > 0 ? 'text-black' : 'text-gray-400'}`}
+                        className={`text-[1.5rem] ${currentPage > 0 ? 'text-black' : 'text-gray-400'}`}
                         onClick={previousPage}
                     >
                         <div className="text-[2rem]">
@@ -200,14 +202,16 @@ const EmployeeDetails = () => {
                         </GenericSelect>
                     </form>
                     <p className="mt-2">
-                        Record {pageNumber * 10 + 1}-
-                        {lastRecord < totalRecord ? lastRecord : totalRecord} of{' '}
-                        {totalRecord}
+                        Record {currentPage * 10 + 1}-
+                        {currentPageRecord < totalRecord
+                            ? currentPageRecord
+                            : totalRecord}{' '}
+                        of {totalRecord}
                     </p>
 
                     <GenericButton
                         type="submit"
-                        className={`text-[1.5rem] ${lastRecord < totalRecord ? 'text-black' : 'text-gray-400'}`}
+                        className={`text-[1.5rem] ${currentPageRecord < totalRecord ? 'text-black' : 'text-gray-400'}`}
                         onClick={setNextPage}
                     >
                         <div className="text-[2rem]">

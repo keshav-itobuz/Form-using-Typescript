@@ -1,16 +1,16 @@
 import { Dispatch, SetStateAction, useEffect } from 'react'
 import { RxCross2 } from 'react-icons/rx'
 import { FormData } from '../interface/interface'
-import customAxios from '../utils/customAxios'
+import axiosInstance from '../utils/axiosInstance'
 import { notifySuccess } from '../utils/Toast'
 import { useForm, FormProvider, SubmitHandler } from 'react-hook-form'
-import GenericInput from './formComponent/GenericInput'
+import GenericInput from './FormComponent/GenericInput'
 import employeeSchema from '../validators/employeeValidator'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Profession } from '../enum/enum'
-import GenericButton from './formComponent/GenericButton'
-import GenericSelect from './formComponent/GenericSelect'
+import GenericButton from './FormComponent/GenericButton'
+import GenericSelect from './FormComponent/GenericSelect'
 
 type PropsType = {
     setIsModalOpen: Dispatch<SetStateAction<boolean>>
@@ -64,7 +64,7 @@ function EmplopyeeModal({
 
     const handleSaveUpdate = async (employeeData: FormData) => {
         try {
-            await customAxios.post('create-update-employee', {
+            await axiosInstance.post('create-update-employee', {
                 employeeData,
             })
             setIsModalOpen(false)
@@ -126,15 +126,22 @@ function EmplopyeeModal({
                                 }
                                 name="profession"
                             >
-                                {Object.values(Profession)
-                                    .filter((item) => item !== Profession.ALL)
-                                    .map((item, index) => {
-                                        return (
-                                            <option value={item} key={index}>
-                                                {item}
-                                            </option>
+                                {Object.values(Profession).map(
+                                    (item, index) => {
+                                        if (
+                                            item !== Profession.ALL &&
+                                            item !== Profession.PROFESSION
                                         )
-                                    })}
+                                            return (
+                                                <option
+                                                    value={item}
+                                                    key={index}
+                                                >
+                                                    {item}
+                                                </option>
+                                            )
+                                    }
+                                )}
                             </GenericSelect>
                         </div>
                         <div className="flex justify-center my-5">

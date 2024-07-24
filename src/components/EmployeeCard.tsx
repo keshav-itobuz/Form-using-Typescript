@@ -1,4 +1,4 @@
-import customAxios from '../utils/customAxios'
+import axiosInstance from '../utils/axiosInstance'
 import { FormData } from '../interface/interface'
 import { FaTrashAlt } from 'react-icons/fa'
 import { MdEdit } from 'react-icons/md'
@@ -19,10 +19,12 @@ const EmployeeCard: FC<PropsType> = ({ employeeInfo, handleGetData }) => {
 
     const handleDelete = async (id: string) => {
         try {
-            await customAxios.delete(`delete-employee?id=${id}`)
+            await axiosInstance.delete(`delete-employee?id=${id}`)
             handleGetData()
+            return true
         } catch (error) {
             console.log(error)
+            return false
         }
     }
 
@@ -58,8 +60,10 @@ const EmployeeCard: FC<PropsType> = ({ employeeInfo, handleGetData }) => {
                             className=" cursor-pointer"
                             onClick={() => {
                                 confirmAlert(() => {
-                                    employeeData?._id &&
+                                    return (
+                                        employeeData?._id &&
                                         handleDelete(employeeData?._id)
+                                    )
                                 })
                             }}
                         >
