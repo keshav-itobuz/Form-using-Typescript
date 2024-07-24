@@ -72,9 +72,6 @@ function EmplopyeeModal({
             notifySuccess('sucessfully updated')
         } catch (error) {
             console.log(error)
-            // if (error instanceof z.ZodError) {
-            //     console.log(error.issues)
-            // }
         }
     }
     const methods = useForm<FormData>({ resolver: yupResolver(employeeSchema) })
@@ -86,6 +83,7 @@ function EmplopyeeModal({
 
     useEffect(() => {
         employeeDetail && methods.reset(employeeDetail)
+        console.log(employeeDetail)
     }, [employeeDetail])
 
     return (

@@ -97,46 +97,52 @@ const EmployeeDetails = () => {
         <FormProvider {...methods}>
             <div className="bg-[#0597ff22] min-h-[100vh] pb-10 px-2">
                 <div className="flex max-w-[1200px] justify-between mx-auto py-7">
-                    <div className="flex gap-1">
-                        <form
-                            onChange={methods.handleSubmit((data) => {
-                                setProfession(data.profession!)
-                                setCurrentPage(0)
-                                getData(
-                                    data.profession!,
-                                    0,
-                                    currentPageRecord,
-                                    searchedName
-                                )
-                            })}
-                        >
-                            <GenericSelect
-                                defaultValue={Profession.ALL}
-                                name="profession"
-                            >
-                                {Object.values(Profession)
-                                    .filter(
-                                        (item) => item !== Profession.PROFESSION
+                    <div className="flex gap-1 flex-col md:flex-row">
+                        <div className="flex gap-1">
+                            <form
+                                onChange={methods.handleSubmit((data) => {
+                                    setProfession(data.profession!)
+                                    setCurrentPage(0)
+                                    getData(
+                                        data.profession!,
+                                        0,
+                                        currentPageRecord,
+                                        searchedName
                                     )
-                                    .map((value: string | number) => {
-                                        return (
-                                            <option value={value} key={value}>
-                                                {value}
-                                            </option>
-                                        )
-                                    })}
-                            </GenericSelect>
-                        </form>
-                        <div className="flex justify-center">
-                            <GenericButton
-                                type="submit"
-                                className={`text-white px-5 py-2 border-2 bg-red-700 hover:bg-red-800 rounded-md ${employeeInfo.length ? 'visible' : 'hidden'}`}
-                                onClick={() => {
-                                    confirmAlert(handleDeleteAll)
-                                }}
+                                })}
                             >
-                                Delete All
-                            </GenericButton>
+                                <GenericSelect
+                                    defaultValue={Profession.ALL}
+                                    name="profession"
+                                >
+                                    {Object.values(Profession)
+                                        .filter(
+                                            (item) =>
+                                                item !== Profession.PROFESSION
+                                        )
+                                        .map((value: string | number) => {
+                                            return (
+                                                <option
+                                                    value={value}
+                                                    key={value}
+                                                >
+                                                    {value}
+                                                </option>
+                                            )
+                                        })}
+                                </GenericSelect>
+                            </form>
+                            <div className="flex justify-center">
+                                <GenericButton
+                                    type="submit"
+                                    className={`text-white px-5 py-2 border-2 bg-red-700 hover:bg-red-800 rounded-md ${employeeInfo.length ? 'visible' : 'hidden'}`}
+                                    onClick={() => {
+                                        confirmAlert(handleDeleteAll)
+                                    }}
+                                >
+                                    Delete All
+                                </GenericButton>
+                            </div>
                         </div>
                         <input
                             placeholder="Search Name"
@@ -151,14 +157,14 @@ const EmployeeDetails = () => {
                         Add Employee data
                     </GenericButton>
                 </div>
-                <div className="max-w-[1200px] mx-auto ">
+                <div className="max-w-[1200px] mx-auto">
                     <div className=" grid grid-cols-12 bg-white py-2 border rounded-t-2xl">
                         <span className="col-span-2 ms-3 ">Name</span>
                         <span className="col-span-5 ">Address</span>
                         <span className="col-span-2">Email</span>
                         <span className="col-span-2 ">Phone No</span>
                     </div>
-                    <div className=" h-[72vh] overflow-y-scroll no-scrollbar]">
+                    <div className=" h-[72vh] overflow-scroll no-scrollbar]">
                         {employeeInfo.length ? (
                             employeeInfo.map((data) => {
                                 return (
