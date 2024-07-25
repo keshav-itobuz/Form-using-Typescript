@@ -10,6 +10,7 @@ import { Profession } from '../enum/enum'
 import EmplopyeeModal from '../components/EmplopyeeModal'
 import GenericButton from '../components/FormComponent/GenericButton'
 import { FormProvider, useForm } from 'react-hook-form'
+import NoData from '../components/NoData'
 
 const EmployeeDetails = () => {
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -158,13 +159,13 @@ const EmployeeDetails = () => {
                     </GenericButton>
                 </div>
                 <div className="max-w-[1200px] mx-auto">
-                    <div className=" grid grid-cols-12 bg-white py-2 border rounded-t-2xl">
+                    <div className="hidden md:grid grid-cols-12 bg-white py-2 border rounded-t-2xl">
                         <span className="col-span-2 ms-3 ">Name</span>
-                        <span className="col-span-5 ">Address</span>
-                        <span className="col-span-2">Email</span>
+                        <span className="col-span-4 ">Address</span>
+                        <span className="col-span-3">Email</span>
                         <span className="col-span-2 ">Phone No</span>
                     </div>
-                    <div className=" h-[72vh] overflow-scroll no-scrollbar]">
+                    <div className=" h-[68vh] overflow-scroll no-scrollbar] flex flex-col gap-1 md:gap-0">
                         {employeeInfo.length ? (
                             employeeInfo.map((data) => {
                                 return (
@@ -176,8 +177,8 @@ const EmployeeDetails = () => {
                                 )
                             })
                         ) : (
-                            <div className="mt-[30vh] text-center">
-                                No data to show
+                            <div className="mt-[14vh] text-center">
+                                <NoData />
                             </div>
                         )}
                     </div>
