@@ -7,7 +7,7 @@ const NoData = () => {
             <div className="max-w-[80vh] ">
                 <Lottie animationData={animation} loop={true} />
             </div>
-            <span className="text-[1.5rem] font-bold mt-10 text-[#254a8f]">
+            <span className="text-[1.5rem] font-bold mt-10 text-[#2e5fb8] animate-bounce">
                 NO DATA FOUND
             </span>
         </div>

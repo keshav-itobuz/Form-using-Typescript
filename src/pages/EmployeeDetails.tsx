@@ -136,7 +136,7 @@ const EmployeeDetails = () => {
                             <div className="flex justify-center">
                                 <GenericButton
                                     type="submit"
-                                    className={`text-white px-5 py-2 border-2 bg-red-700 hover:bg-red-800 rounded-md ${employeeInfo.length ? 'visible' : 'hidden'}`}
+                                    className={`text-white px-2 sm:px-5 py-2 border-2 bg-red-700 hover:bg-red-800 text-[0.9rem] rounded-md ${employeeInfo.length ? 'visible' : 'hidden'}`}
                                     onClick={() => {
                                         confirmAlert(handleDeleteAll)
                                     }}
@@ -183,7 +183,7 @@ const EmployeeDetails = () => {
                         )}
                     </div>
                 </div>
-                <div className="flex justify-center mx-auto  max-w-[1200px] mt-6 gap-5">
+                <div className="flex justify-center mx-auto  max-w-[1200px] mt-10 gap-5">
                     <GenericButton
                         type="submit"
                         className={`text-[1.5rem] ${currentPage > 0 ? 'text-black' : 'text-gray-400'}`}

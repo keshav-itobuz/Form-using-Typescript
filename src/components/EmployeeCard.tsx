@@ -36,7 +36,7 @@ const EmployeeCard: FC<PropsType> = ({ employeeInfo, handleGetData }) => {
     return (
         <div>
             {employeeData && (
-                <div className=" grid grid-cols-12 gap-3 md:gap-0 bg-white border py-4 ps-3 md:ps-0">
+                <div className=" grid grid-cols-12 gap-3 md:gap-0 bg-white border py-4 ps-3 md:ps-0 text-[0.9rem] sm:text-[1rem]">
                     <span className="col-span-12 md:col-span-2 md:ms-3 pe-1 truncate">
                         <span className="md:hidden font-semibold font">
                             Name :{' '}
