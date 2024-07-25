@@ -83,8 +83,7 @@ function EmplopyeeModal({
 
     useEffect(() => {
         employeeDetail && methods.reset(employeeDetail)
-        console.log(employeeDetail)
-    }, [employeeDetail])
+    }, [employeeDetail, methods])
 
     return (
         <FormProvider {...methods}>
