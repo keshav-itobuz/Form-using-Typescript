@@ -10,6 +10,7 @@ import { Profession } from '../enum/enum'
 import GenericButton from './FormComponent/GenericButton'
 import GenericSelect from './FormComponent/GenericSelect'
 import { yupResolver } from '@hookform/resolvers/yup'
+import genericInputData from '../data/genericInputData'
 
 type PropsType = {
     setIsModalOpen: Dispatch<SetStateAction<boolean>>
@@ -23,44 +24,6 @@ function EmplopyeeModal({
     setEmployeeDetail,
     handleFormData,
 }: PropsType) {
-    const genericInputData = [
-        {
-            type: 'text',
-            placeholder: 'Name',
-            name: 'name',
-        },
-        {
-            type: 'email',
-            placeholder: 'Email',
-            name: 'email',
-        },
-        {
-            type: 'number',
-            placeholder: 'Phone No',
-            name: 'phone',
-        },
-        {
-            type: 'text',
-            placeholder: 'Building',
-            name: 'building',
-        },
-        {
-            type: 'text',
-            placeholder: 'City',
-            name: 'city',
-        },
-        {
-            type: 'text',
-            placeholder: 'State',
-            name: 'state',
-        },
-        {
-            type: 'number',
-            placeholder: 'Pincode',
-            name: 'pincode',
-        },
-    ]
-
     const handleSaveUpdate = async (employeeData: FormData) => {
         try {
             await axiosInstance.post('create-update-employee', {
@@ -88,7 +51,7 @@ function EmplopyeeModal({
     return (
         <FormProvider {...methods}>
             <div className=" z-10 fixed inset-0 bg-black/60  overflow-y-scroll no-scrollbar">
-                <div className=" bg-white rounded-2xl sm:w-[60%] md:w-[30%] mx-2 sm:mx-auto mt-10 md:mt-5 p-5 md:p-7 ">
+                <div className=" bg-white rounded-2xl sm:w-[60%] md:w-[30%] mx-2 :mx-auto mt-10 md:mt-5 p-5 md:p-7 ">
                     <div className="flex justify-between sm:gap-[200px]">
                         <h2 className="text-[1.2rem] font-medium">
                             Edit Response
