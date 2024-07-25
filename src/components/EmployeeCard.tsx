@@ -7,14 +7,14 @@ import { FC, useState } from 'react'
 import EmplopyeeModal from './EmplopyeeModal'
 
 type PropsType = {
-    employeeInfo: FormData
+    employeeDetail: FormData
     handleGetData: () => void
 }
 
-const EmployeeCard: FC<PropsType> = ({ employeeInfo, handleGetData }) => {
+const EmployeeCard: FC<PropsType> = ({ employeeDetail, handleGetData }) => {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [employeeData, setEmployeeData] = useState<FormData | undefined>(
-        employeeInfo
+        employeeDetail
     )
 
     const handleDelete = async (id: string) => {

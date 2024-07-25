@@ -50,9 +50,9 @@ function EmplopyeeModal({
 
     return (
         <FormProvider {...methods}>
-            <div className=" z-10 fixed inset-0 bg-black/60  overflow-y-scroll no-scrollbar">
-                <div className=" bg-white rounded-2xl sm:w-[60%] md:w-[30%] mx-2 :mx-auto mt-10 md:mt-5 p-5 md:p-7 ">
-                    <div className="flex justify-between sm:gap-[200px]">
+            <div className=" z-10 fixed inset-0 bg-black/60  overflow-y-scroll  no-scrollbar">
+                <div className=" bg-white rounded-2xl mx-5 sm:w-[60%]  md:w-[50%] lg:w-[30%] sm:mx-auto mt-10 md:mt-5 p-5 md:p-7 ">
+                    <div className="flex justify-between">
                         <h2 className="text-[1.2rem] font-medium">
                             Edit Response
                         </h2>

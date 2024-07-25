@@ -16,11 +16,13 @@ const EmployeeDetails = () => {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [employeeInfo, setEmployeeInfo] = useState<Array<FormData>>([])
     const [currentPage, setCurrentPage] = useState<number>(0)
-    const [currentPageRecord, setCurrentPageRecord] = useState<number>(10)
+    const [currentPageRecord, setCurrentPageRecord] = useState<number>(5)
     const [profession, setProfession] = useState<string>(Profession.ALL)
     const [totalRecord, setTotalRecord] = useState<number>(1)
     const [searchedName, setSearchedName] = useState<string>('')
-    const recordsIndex = [10, 20, 30, 40, 50]
+    const recordsIndex = [5, 10, 15, 20, 25]
+    const pageStartIndex = currentPageRecord * currentPage + 1
+    const pageLastIndex = currentPageRecord * currentPage + currentPageRecord
 
     type SelectType = {
         profession?: Profession
@@ -70,29 +72,28 @@ const EmployeeDetails = () => {
     }
 
     const setNextPage = () => {
-        if (currentPageRecord < totalRecord) {
+        if (pageLastIndex < totalRecord) {
             setCurrentPage(currentPage + 1)
-            setCurrentPageRecord((currentPage + 1) * 10 + 10)
         }
     }
 
     const previousPage = () => {
         if (currentPage > 0) {
             setCurrentPage(currentPage - 1)
-            setCurrentPageRecord((currentPage + 1) * 10 - 10)
         }
     }
 
     const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
         setSearchedName(e.target.value)
+        setCurrentPage(0)
         getData(profession, currentPage, currentPageRecord, e.target.value)
     }
 
     const methods = useForm<SelectType>()
 
     useEffect(() => {
-        getData(profession, currentPage, 10, searchedName)
-    }, [currentPage])
+        getData(profession, currentPage, currentPageRecord, searchedName)
+    }, [currentPage, profession])
 
     return (
         <FormProvider {...methods}>
@@ -104,12 +105,6 @@ const EmployeeDetails = () => {
                                 onChange={methods.handleSubmit((data) => {
                                     setProfession(data.profession!)
                                     setCurrentPage(0)
-                                    getData(
-                                        data.profession!,
-                                        0,
-                                        currentPageRecord,
-                                        searchedName
-                                    )
                                 })}
                             >
                                 <GenericSelect
@@ -170,7 +165,7 @@ const EmployeeDetails = () => {
                             employeeInfo.map((data) => {
                                 return (
                                     <EmployeeCard
-                                        employeeInfo={data}
+                                        employeeDetail={data}
                                         handleGetData={() => handleGetData()}
                                         key={data._id}
                                     />
@@ -198,7 +193,7 @@ const EmployeeDetails = () => {
                             handlePagination(data.page!)
                         )}
                     >
-                        <GenericSelect defaultValue={10} name="page">
+                        <GenericSelect defaultValue={5} name="page">
                             {recordsIndex.map((value) => {
                                 return (
                                     <option value={value} key={value}>
@@ -209,16 +204,16 @@ const EmployeeDetails = () => {
                         </GenericSelect>
                     </form>
                     <p className="mt-2">
-                        Record {currentPage * 10 + 1}-
-                        {currentPageRecord < totalRecord
-                            ? currentPageRecord
+                        Record {pageStartIndex}-
+                        {pageLastIndex < totalRecord
+                            ? pageLastIndex
                             : totalRecord}{' '}
                         of {totalRecord}
                     </p>
 
                     <GenericButton
                         type="submit"
-                        className={`text-[1.5rem] ${currentPageRecord < totalRecord ? 'text-black' : 'text-gray-400'}`}
+                        className={`text-[1.5rem] ${pageLastIndex < totalRecord ? 'text-black' : 'text-gray-400'}`}
                         onClick={setNextPage}
                     >
                         <div className="text-[2rem]">
