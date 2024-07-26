@@ -10,7 +10,7 @@ const employeeSchema = yup.object({
     phone: yup.string().max(10, 'Phone number must be at most 10 characters'),
     building: yup.string().required('required'),
     profession: yup
-        .mixed<Profession>()
+        .string()
         .oneOf(Object.values(Profession), 'Invalid profession')
         .required('required'),
     city: yup.string().required('required'),

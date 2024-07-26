@@ -1,26 +1,25 @@
 import axiosInstance from '../utils/axiosInstance'
-import { FormData } from '../interface/interface'
+import { FormData } from '../interface/formDataInterface'
 import { FaTrashAlt } from 'react-icons/fa'
 import { MdEdit } from 'react-icons/md'
 import { confirmAlert } from '../utils/confirmAlert'
-import { FC, useState } from 'react'
+import { useContext, useState } from 'react'
 import EmplopyeeModal from './EmplopyeeModal'
+import ContextInterface from '../interface/employeeContextInterface'
+import { EmployeeContext } from '../Context/EmployeeContext'
 
-type PropsType = {
-    employeeDetail: FormData
-    handleGetData: () => void
-}
-
-const EmployeeCard: FC<PropsType> = ({ employeeDetail, handleGetData }) => {
+const EmployeeCard = ({ employeeDetail }: { employeeDetail: FormData }) => {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [employeeData, setEmployeeData] = useState<FormData | undefined>(
         employeeDetail
     )
 
+    const { getEmployeeInfo } = useContext(EmployeeContext) as ContextInterface
+
     const handleDelete = async (id: string) => {
         try {
             await axiosInstance.delete(`delete-employee?id=${id}`)
-            handleGetData()
+            getEmployeeInfo()
             return true
         } catch (error) {
             console.log(error)

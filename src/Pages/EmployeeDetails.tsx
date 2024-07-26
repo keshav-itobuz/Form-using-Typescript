@@ -1,6 +1,5 @@
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useContext, useEffect, useState } from 'react'
 import EmployeeCard from '../components/EmployeeCard'
-import { FormData } from '../interface/interface'
 import { confirmAlert } from '../utils/confirmAlert'
 import { FaCaretRight } from 'react-icons/fa'
 import { FaCaretLeft } from 'react-icons/fa'
@@ -11,51 +10,42 @@ import EmplopyeeModal from '../components/EmplopyeeModal'
 import GenericButton from '../components/FormComponent/GenericButton'
 import { FormProvider, useForm } from 'react-hook-form'
 import NoData from '../components/NoData'
+import { EmployeeContext } from '../Context/EmployeeContext'
+import ContextInterface from '../interface/employeeContextInterface'
 
 const EmployeeDetails = () => {
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [employeeInfo, setEmployeeInfo] = useState<Array<FormData>>([])
-    const [currentPage, setCurrentPage] = useState<number>(0)
-    const [currentPageRecord, setCurrentPageRecord] = useState<number>(5)
-    const [profession, setProfession] = useState<string>(Profession.ALL)
-    const [totalRecord, setTotalRecord] = useState<number>(1)
-    const [searchedName, setSearchedName] = useState<string>('')
-    const recordsIndex = [5, 10, 15, 20, 25]
+
+    const {
+        employeeInfo,
+        setEmployeeInfo,
+        getEmployeeInfo,
+        totalRecord,
+        setTotalRecord,
+        currentPage,
+        setCurrentPage,
+        currentPageRecord,
+        setCurrentPageRecord,
+        profession,
+        setProfession,
+        searchedName,
+        setSearchedName,
+    } = useContext(EmployeeContext) as ContextInterface
+
     const pageStartIndex = currentPageRecord * currentPage + 1
     const pageLastIndex = currentPageRecord * currentPage + currentPageRecord
+    const recordsIndex = [5, 10, 15, 20, 25]
 
     type SelectType = {
         profession?: Profession
         page?: number
     }
 
-    const getData = async (
-        profession: string,
-        page: number,
-        limit: number,
-        searchedName: string
-    ) => {
-        try {
-            const { data } = await axiosInstance.get(
-                `get-employee?profession=${profession}&page=${page}&limit=${limit}&searchedName=${searchedName}`
-            )
-            if (data) {
-                setEmployeeInfo(data.employeeData)
-                setTotalRecord(data.total)
-            }
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    const handleGetData = () => {
-        getData(profession, currentPage, currentPageRecord, searchedName)
-    }
-
     const handleDeleteAll = async () => {
         try {
             await axiosInstance.delete(`delete-employee`)
             setEmployeeInfo([])
+            setTotalRecord(0)
         } catch (error) {
             console.log(error)
         }
@@ -66,7 +56,7 @@ const EmployeeDetails = () => {
     }
 
     const handlePagination = (pageRecord: number) => {
-        getData(profession, 0, pageRecord, searchedName)
+        setCurrentPage(0)
         setCurrentPageRecord(Number(pageRecord))
         setCurrentPage(0)
     }
@@ -86,14 +76,13 @@ const EmployeeDetails = () => {
     const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
         setSearchedName(e.target.value)
         setCurrentPage(0)
-        getData(profession, currentPage, currentPageRecord, e.target.value)
     }
 
     const methods = useForm<SelectType>()
 
     useEffect(() => {
-        getData(profession, currentPage, currentPageRecord, searchedName)
-    }, [currentPage, profession])
+        getEmployeeInfo()
+    }, [currentPage, currentPageRecord, profession, searchedName])
 
     return (
         <FormProvider {...methods}>
@@ -166,7 +155,6 @@ const EmployeeDetails = () => {
                                 return (
                                     <EmployeeCard
                                         employeeDetail={data}
-                                        handleGetData={() => handleGetData()}
                                         key={data._id}
                                     />
                                 )
@@ -225,7 +213,6 @@ const EmployeeDetails = () => {
                 {isModalOpen && (
                     <EmplopyeeModal
                         setIsModalOpen={() => setIsModalOpen(false)}
-                        handleFormData={() => handleGetData()}
                     />
                 )}
             </div>

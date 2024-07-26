@@ -1,6 +1,6 @@
-import { Dispatch, SetStateAction, useEffect } from 'react'
+import { Dispatch, SetStateAction, useContext, useEffect } from 'react'
 import { RxCross2 } from 'react-icons/rx'
-import { FormData } from '../interface/interface'
+import { FormData } from '../interface/formDataInterface'
 import axiosInstance from '../utils/axiosInstance'
 import { notifySuccess } from '../utils/Toast'
 import { useForm, FormProvider, SubmitHandler } from 'react-hook-form'
@@ -11,19 +11,21 @@ import GenericButton from './FormComponent/GenericButton'
 import GenericSelect from './FormComponent/GenericSelect'
 import { yupResolver } from '@hookform/resolvers/yup'
 import genericInputData from '../data/genericInputData'
+import { EmployeeContext } from '../Context/EmployeeContext'
+import ContextInterface from '../interface/employeeContextInterface'
 
 type PropsType = {
     setIsModalOpen: Dispatch<SetStateAction<boolean>>
-    handleFormData?: () => void
     employeeDetail?: FormData
     setEmployeeDetail?: Dispatch<SetStateAction<FormData | undefined>>
 }
+
 function EmplopyeeModal({
     setIsModalOpen,
     employeeDetail,
     setEmployeeDetail,
-    handleFormData,
 }: PropsType) {
+    const { getEmployeeInfo } = useContext(EmployeeContext) as ContextInterface
     const handleSaveUpdate = async (employeeData: FormData) => {
         try {
             await axiosInstance.post('create-update-employee', {
@@ -31,7 +33,7 @@ function EmplopyeeModal({
             })
             setIsModalOpen(false)
             if (setEmployeeDetail) setEmployeeDetail(employeeData)
-            if (handleFormData) handleFormData()
+            else getEmployeeInfo()
             notifySuccess('sucessfully updated')
         } catch (error) {
             console.log(error)

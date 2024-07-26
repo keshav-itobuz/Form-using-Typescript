@@ -1,31 +1,23 @@
-import { createContext, useContext, useState } from 'react'
-import { FormData } from '../interface/interface'
+import { createContext, useState } from 'react'
+import { FormData } from '../interface/formDataInterface'
 import axiosInstance from '../utils/axiosInstance'
-interface ContextInterface {
-    employeeInfo: FormData[]
-    getEmployeeInfo: (
-        profession: string,
-        page: number,
-        limit: number,
-        searchedName: string
-    ) => void
-    totalRecord: number
-}
-const EmployeeContext = createContext<ContextInterface | null>(null)
+import ContextInterface from '../interface/employeeContextInterface'
+import { Profession } from '../enum/enum'
+
+const EmployeeContext = createContext<ContextInterface | undefined>(undefined)
 
 const EmployeeProvider = ({ children }: { children: React.ReactNode }) => {
     const [employeeInfo, setEmployeeInfo] = useState<Array<FormData>>([])
     const [totalRecord, setTotalRecord] = useState<number>(1)
+    const [currentPage, setCurrentPage] = useState<number>(0)
+    const [currentPageRecord, setCurrentPageRecord] = useState<number>(5)
+    const [profession, setProfession] = useState<string>(Profession.ALL)
+    const [searchedName, setSearchedName] = useState<string>('')
 
-    const getEmployeeInfo = async (
-        profession: string,
-        page: number,
-        limit: number,
-        searchedName: string
-    ) => {
+    const getEmployeeInfo = async () => {
         try {
             const { data } = await axiosInstance.get(
-                `get-employee?profession=${profession}&page=${page}&limit=${limit}&searchedName=${searchedName}`
+                `get-employee?profession=${profession}&page=${currentPage}&limit=${currentPageRecord}&searchedName=${searchedName}`
             )
             if (data) {
                 setEmployeeInfo(data.employeeData)
@@ -35,18 +27,27 @@ const EmployeeProvider = ({ children }: { children: React.ReactNode }) => {
             console.log(error)
         }
     }
-
     return (
         <EmployeeContext.Provider
-            value={{ employeeInfo, getEmployeeInfo, totalRecord }}
+            value={{
+                employeeInfo,
+                setEmployeeInfo,
+                getEmployeeInfo,
+                totalRecord,
+                setTotalRecord,
+                currentPage,
+                setCurrentPage,
+                currentPageRecord,
+                setCurrentPageRecord,
+                searchedName,
+                setSearchedName,
+                profession,
+                setProfession,
+            }}
         >
             {children}
         </EmployeeContext.Provider>
     )
 }
 
-const useEmployee = () => {
-    return useContext(EmployeeContext)
-}
-
-export { EmployeeProvider, useEmployee }
+export { EmployeeProvider, EmployeeContext }
