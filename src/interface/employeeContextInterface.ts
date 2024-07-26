@@ -15,6 +15,7 @@ export interface ContextInterface {
     setProfession: React.Dispatch<React.SetStateAction<string>>
     searchedName: string
     setSearchedName: React.Dispatch<React.SetStateAction<string>>
+    handleDeleteAll: () => void
 }
 
 export default ContextInterface

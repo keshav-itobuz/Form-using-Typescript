@@ -1,5 +1,5 @@
 import * as yup from 'yup'
-import { Profession } from '../enum/enum'
+import { Profession } from '../enum/professionEnum'
 
 const employeeSchema = yup.object({
     name: yup

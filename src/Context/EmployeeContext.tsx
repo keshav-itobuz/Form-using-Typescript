@@ -2,7 +2,7 @@ import { createContext, useState } from 'react'
 import { FormData } from '../interface/formDataInterface'
 import axiosInstance from '../utils/axiosInstance'
 import ContextInterface from '../interface/employeeContextInterface'
-import { Profession } from '../enum/enum'
+import { Profession } from '../enum/professionEnum'
 
 const EmployeeContext = createContext<ContextInterface | undefined>(undefined)
 
@@ -27,12 +27,23 @@ const EmployeeProvider = ({ children }: { children: React.ReactNode }) => {
             console.log(error)
         }
     }
+
+    const handleDeleteAll = async () => {
+        try {
+            await axiosInstance.delete(`delete-employee`)
+            setEmployeeInfo([])
+            setTotalRecord(0)
+        } catch (error) {
+            console.log(error)
+        }
+    }
     return (
         <EmployeeContext.Provider
             value={{
                 employeeInfo,
                 setEmployeeInfo,
                 getEmployeeInfo,
+                handleDeleteAll,
                 totalRecord,
                 setTotalRecord,
                 currentPage,

@@ -3,9 +3,8 @@ import EmployeeCard from '../components/EmployeeCard'
 import { confirmAlert } from '../utils/confirmAlert'
 import { FaCaretRight } from 'react-icons/fa'
 import { FaCaretLeft } from 'react-icons/fa'
-import axiosInstance from '../utils/axiosInstance'
 import GenericSelect from '../components/FormComponent/GenericSelect'
-import { Profession } from '../enum/enum'
+import { Profession } from '../enum/professionEnum'
 import EmplopyeeModal from '../components/EmplopyeeModal'
 import GenericButton from '../components/FormComponent/GenericButton'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -18,10 +17,9 @@ const EmployeeDetails = () => {
 
     const {
         employeeInfo,
-        setEmployeeInfo,
+        handleDeleteAll,
         getEmployeeInfo,
         totalRecord,
-        setTotalRecord,
         currentPage,
         setCurrentPage,
         currentPageRecord,
@@ -41,16 +39,6 @@ const EmployeeDetails = () => {
         page?: number
     }
 
-    const handleDeleteAll = async () => {
-        try {
-            await axiosInstance.delete(`delete-employee`)
-            setEmployeeInfo([])
-            setTotalRecord(0)
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
     const handleNewEntry = () => {
         setIsModalOpen(true)
     }
@@ -58,7 +46,6 @@ const EmployeeDetails = () => {
     const handlePagination = (pageRecord: number) => {
         setCurrentPage(0)
         setCurrentPageRecord(Number(pageRecord))
-        setCurrentPage(0)
     }
 
     const setNextPage = () => {
