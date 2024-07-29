@@ -45,7 +45,7 @@ const EmployeeDetails = () => {
 
     const handlePagination = (pageRecord: number) => {
         setCurrentPage(0)
-        setCurrentPageRecord(pageRecord)
+        setCurrentPageRecord(Number(pageRecord))
     }
 
     const setNextPage = () => {

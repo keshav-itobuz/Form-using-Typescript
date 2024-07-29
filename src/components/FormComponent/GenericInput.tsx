@@ -15,7 +15,7 @@ const GenericInput: FC<InputHTMLAttributes<HTMLInputElement>> = (props) => {
                     <input
                         className=" outline-none font-default-font-family placeholder-[#ABABB2] border-[0.1rem] border-[#C0CAD4] p-[0.5rem] lg:p-[0.8rem] text-[0.9rem] rounded-md"
                         onChange={onChange}
-                        value={value}
+                        defaultValue={value}
                         {...props}
                     />
                     <div className="h-1">
