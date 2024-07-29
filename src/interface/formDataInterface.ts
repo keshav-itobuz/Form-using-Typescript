@@ -7,7 +7,7 @@ export interface FormData {
     building: string
     city: string
     state: string
-    pincode: string
+    pincode: number
     phone?: string
     email: string
 }
