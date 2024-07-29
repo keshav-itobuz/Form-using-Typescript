@@ -1,4 +1,4 @@
-import { ChangeEvent, useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import EmployeeCard from '../components/EmployeeCard'
 import { confirmAlert } from '../utils/confirmAlert'
 import { FaCaretRight } from 'react-icons/fa'
@@ -13,8 +13,6 @@ import { EmployeeContext } from '../Context/EmployeeContext'
 import ContextInterface from '../interface/employeeContextInterface'
 
 const EmployeeDetails = () => {
-    const [isModalOpen, setIsModalOpen] = useState(false)
-
     const {
         employeeInfo,
         handleDeleteAll,
@@ -29,6 +27,9 @@ const EmployeeDetails = () => {
         searchedName,
         setSearchedName,
     } = useContext(EmployeeContext) as ContextInterface
+
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [debounceValue, setDebounceValue] = useState(searchedName)
 
     const pageStartIndex = currentPageRecord * currentPage + 1
     const pageLastIndex = currentPageRecord * currentPage + currentPageRecord
@@ -60,16 +61,19 @@ const EmployeeDetails = () => {
         }
     }
 
-    const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
-        setSearchedName(e.target.value)
-        setCurrentPage(0)
-    }
-
     const methods = useForm<SelectType>()
 
     useEffect(() => {
         getEmployeeInfo()
     }, [currentPage, currentPageRecord, profession, searchedName])
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            setSearchedName(debounceValue)
+            setCurrentPage(0)
+        }, 1000)
+        return () => clearTimeout(timeout)
+    }, [debounceValue])
 
     return (
         <FormProvider {...methods}>
@@ -119,7 +123,7 @@ const EmployeeDetails = () => {
                         <input
                             placeholder="Search Name"
                             className=" outline-none font-default-font-family placeholder-[#ABABB2] border-[0.1rem] border-[#C0CAD4] p-[0.8rem] text-[0.9rem] rounded-md"
-                            onChange={(e) => handleSearch(e)}
+                            onChange={(e) => setDebounceValue(e.target.value)}
                         />
                     </div>
                     <GenericButton

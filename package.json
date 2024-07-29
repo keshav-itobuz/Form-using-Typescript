@@ -12,6 +12,7 @@
     "dependencies": {
         "@hookform/resolvers": "^3.9.0",
         "axios": "^1.7.2",
+        "lodash": "^4.17.21",
         "lottie-react": "^2.4.0",
         "react": "^18.3.1",
         "react-calendar": "^5.0.0",
@@ -25,6 +26,7 @@
         "zod": "^3.23.8"
     },
     "devDependencies": {
+        "@types/lodash": "^4.17.7",
         "@types/react": "^18.3.3",
         "@types/react-dom": "^18.3.0",
         "@typescript-eslint/eslint-plugin": "^7.13.1",
