@@ -2,6 +2,7 @@ import * as yup from 'yup'
 import { Profession } from '../enum/professionEnum'
 
 const employeeSchema = yup.object({
+    _id: yup.string(),
     name: yup
         .string()
         .required('required')
