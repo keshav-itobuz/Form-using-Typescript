@@ -10,7 +10,7 @@ const EmployeeProvider = ({ children }: { children: React.ReactNode }) => {
     const [employeeInfo, setEmployeeInfo] = useState<Array<FormData>>([])
     const [totalRecord, setTotalRecord] = useState<number>(1)
     const [currentPage, setCurrentPage] = useState<number>(0)
-    const [currentPageRecord, setCurrentPageRecord] = useState<number>(5)
+    const [currentPageRecord, setCurrentPageRecord] = useState<number>(10)
     const [profession, setProfession] = useState<string>(Profession.ALL)
     const [searchedName, setSearchedName] = useState<string>('')
 

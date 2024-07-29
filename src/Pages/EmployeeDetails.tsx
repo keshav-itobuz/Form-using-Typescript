@@ -45,7 +45,7 @@ const EmployeeDetails = () => {
 
     const handlePagination = (pageRecord: number) => {
         setCurrentPage(0)
-        setCurrentPageRecord(Number(pageRecord))
+        setCurrentPageRecord(pageRecord)
     }
 
     const setNextPage = () => {
@@ -168,7 +168,7 @@ const EmployeeDetails = () => {
                             handlePagination(data.page!)
                         )}
                     >
-                        <GenericSelect defaultValue={5} name="page">
+                        <GenericSelect defaultValue={10} name="page">
                             {recordsIndex.map((value) => {
                                 return (
                                     <option value={value} key={value}>
